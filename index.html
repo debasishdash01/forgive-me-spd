@@ -391,11 +391,29 @@
     <div class="sunshine-overlay" id="sunshine-overlay"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔇</button>
+    <!-- CUSTOMIZE: Replace "song.mp3" with your audio filename -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Tap-to-start overlay (needed for mobile autoplay policy) -->
+    <div id="start-overlay" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        z-index: 9999; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; cursor: pointer;
+        color: #fff; font-family: Georgia, serif; text-align: center; padding: 20px;
+    ">
+        <div style="font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🌻🌻</div>
+        <p style="font-size: 22px; margin-bottom: 10px;">Someone made this for you...</p>
+        <p style="font-size: 16px; opacity: 0.8;">Tap anywhere to open</p>
+    </div>
+
+    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
 
     <div class="container" id="main-screen">
         <div class="sad-face" id="sad-face">🥺</div>
-        <h1 class="title" id="title">Will you forgive me, <span id="name-display">Sunshine</span>?</h1>
+        <h1 class="title" id="title">Will you forgive me, <span id="name-display">Shibapriya</span>?</h1>
         <p class="guilt-message" id="guilt-message"></p>
         <p class="countdown" id="countdown"></p>
         <p class="attempt-counter" id="attempt-counter"></p>
@@ -407,7 +425,7 @@
 
     <div class="celebration" id="celebration-screen">
         <div class="big-heart">💖</div>
-        <h1 class="thank-you">Thank You, <span id="name-celebration">Sunshine</span>!</h1>
+        <h1 class="thank-you">Thank You, <span id="name-celebration">Shibapriya</span>!</h1>
         <p class="love-message">You're the best friend anyone could ever ask for.</p>
 
         <!-- 8 sunflowers (even number - sunflower theory) -->
@@ -417,14 +435,14 @@
 
         <div class="apology-letter">
             <!-- CUSTOMIZE: Edit this apology letter with your own words -->
-            <p>Dear <span class="letter-name">Sunshine</span>,</p>
+            <p>Dear <span class="letter-name">Shibapriya</span>,</p>
             <p>Okay look — I know I messed up. Big time. And I've been dramatically overthinking about it ever since (you know how I get).</p>
             <p>You didn't deserve that, and I'm genuinely, truly, deeply sorry. Our friendship is literally one of the best things that's ever happened to me, and the thought of losing it makes me want to throw my phone into the ocean.</p>
             <p>Nobody gets me like you do. Nobody makes me laugh like you do. And honestly? Nobody else could pull off being this mad and still look that good doing it 😏</p>
             <p>I promise to be better. Not just in words — in actions. You deserve a friend who shows up properly, and that's exactly what I'm going to be.</p>
             <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
             <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
-            <p class="signature">Your favorite idiot, <br><!-- CUSTOMIZE: Replace with your name -->You Know Who 🌻</p>
+            <p class="signature">Your favorite(!?) idiot maglu, <br><!-- CUSTOMIZE: Replace with your name -->Debasish 🌻</p>
         </div>
     </div>
 
@@ -434,7 +452,7 @@
         // ============================================================
 
         // CUSTOMIZE: Change this to the person's name / nickname
-        const PERSON_NAME = "Sunshine";
+        const PERSON_NAME = "Shibapriya";
 
         // Personalized guilt messages (uses PERSON_NAME automatically)
         const guiltMessages = [
@@ -478,8 +496,10 @@
         // STATE
         // ============================================================
         let noAttempts = 0;
-        let soundEnabled = false;
+        let soundEnabled = true; // Sound ON by default
         let audioCtx = null;
+        const bgMusic = document.getElementById('bg-music');
+        bgMusic.volume = 0.5;
         let typingTimeout = null;
         let startTime = Date.now();
         let countdownInterval = null;
@@ -584,13 +604,23 @@
             playTone(800, 0.08, 'square', 0.05);
         }
 
+        // --- Start overlay (needed for mobile autoplay) ---
+        const startOverlay = document.getElementById('start-overlay');
+        startOverlay.addEventListener('click', () => {
+            startOverlay.style.display = 'none';
+            bgMusic.play().catch(() => {});
+            getAudioCtx();
+        });
+
         // --- Sound toggle ---
         soundToggle.addEventListener('click', () => {
             soundEnabled = !soundEnabled;
             soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
             if (soundEnabled) {
+                bgMusic.play().catch(() => {});
                 getAudioCtx();
-                playTone(600, 0.15, 'sine', 0.1);
+            } else {
+                bgMusic.pause();
             }
         });
 
