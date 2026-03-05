@@ -477,16 +477,16 @@
 
         // Progressive background colors (gets darker/sadder with each No attempt)
         const bgStages = [
-            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",   // initial - calm purple
-            "linear-gradient(135deg, #5b6abf 0%, #6a4199 100%)",   // slightly darker
-            "linear-gradient(135deg, #4f5da4 0%, #5e3890 100%)",   // darker
-            "linear-gradient(135deg, #434f89 0%, #522f87 100%)",   // getting moody
-            "linear-gradient(135deg, #37416e 0%, #46267e 100%)",   // dark
-            "linear-gradient(135deg, #2b3353 0%, #3a1d75 100%)",   // very dark
-            "linear-gradient(135deg, #1f2538 0%, #2e146c 100%)",   // almost black
-            "linear-gradient(135deg, #191d2b 0%, #220b5a 100%)",   // near pitch
-            "linear-gradient(135deg, #12151e 0%, #160448 100%)",   // super dark
-            "linear-gradient(135deg, #0a0d14 0%, #0a0236 100%)"    // nearly black
+            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "linear-gradient(135deg, #5b6abf 0%, #6a4199 100%)",
+            "linear-gradient(135deg, #4f5da4 0%, #5e3890 100%)",
+            "linear-gradient(135deg, #434f89 0%, #522f87 100%)",
+            "linear-gradient(135deg, #37416e 0%, #46267e 100%)",
+            "linear-gradient(135deg, #2b3353 0%, #3a1d75 100%)",
+            "linear-gradient(135deg, #1f2538 0%, #2e146c 100%)",
+            "linear-gradient(135deg, #191d2b 0%, #220b5a 100%)",
+            "linear-gradient(135deg, #12151e 0%, #160448 100%)",
+            "linear-gradient(135deg, #0a0d14 0%, #0a0236 100%)"
         ];
 
         // Celebration background (bright and warm)
@@ -496,7 +496,7 @@
         // STATE
         // ============================================================
         let noAttempts = 0;
-        let soundEnabled = true; // Sound ON by default
+        let soundEnabled = true;
         let audioCtx = null;
         const bgMusic = document.getElementById('bg-music');
         bgMusic.volume = 0.5;
@@ -529,29 +529,6 @@
         // ============================================================
         // AUDIO
         // ============================================================
-        // CUSTOMIZE SOUNDS: Replace playSadSound() and playHappyMelody()
-        // with your own audio files. Example:
-        //
-        //   const sadAudio = new Audio('path/to/sad-sound.mp3');
-        //   const happyAudio = new Audio('path/to/happy-sound.mp3');
-        //
-        //   function playSadSound() {
-        //       if (!soundEnabled) return;
-        //       sadAudio.currentTime = 0;
-        //       sadAudio.play();
-        //   }
-        //
-        //   function playHappyMelody() {
-        //       if (!soundEnabled) return;
-        //       happyAudio.currentTime = 0;
-        //       happyAudio.play();
-        //   }
-        //
-        // You can use free sounds from https://freesound.org or
-        // https://mixkit.co/free-sound-effects/
-        // Place the .mp3 files in the same folder as index.html
-        // ============================================================
-
         function getAudioCtx() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -576,16 +553,12 @@
             } catch (e) {}
         }
 
-        // SAD SOUND - plays when they try to click No
-        // (Replace this function body with custom audio - see instructions above)
         function playSadSound() {
             playTone(400, 0.3, 'sine', 0.1);
             setTimeout(() => playTone(350, 0.3, 'sine', 0.1), 150);
             setTimeout(() => playTone(300, 0.5, 'sine', 0.1), 300);
         }
 
-        // HAPPY SOUND - plays when they click Yes
-        // (Replace this function body with custom audio - see instructions above)
         function playHappyMelody() {
             if (!soundEnabled) return;
             const notes = [523, 587, 659, 698, 784, 880, 988, 1047];
@@ -610,7 +583,6 @@
             startOverlay.style.display = 'none';
             bgMusic.play().catch(e => console.warn('Audio play failed:', e));
             getAudioCtx();
-            // Start the experience only after overlay is tapped
             startTime = Date.now();
             typeMessage(guiltMessages[0]);
             countdownInterval = setInterval(updateCountdown, 1000);
@@ -638,14 +610,12 @@
 
             function typeChar() {
                 if (i < text.length) {
-                    // Insert character before the cursor
                     const cursor = guiltMessageEl.querySelector('.cursor');
                     const charSpan = document.createTextNode(text[i]);
                     guiltMessageEl.insertBefore(charSpan, cursor);
                     i++;
                     typingTimeout = setTimeout(typeChar, 35 + Math.random() * 25);
                 } else {
-                    // Remove cursor after typing finishes
                     setTimeout(() => {
                         const cursor = guiltMessageEl.querySelector('.cursor');
                         if (cursor) cursor.remove();
@@ -655,8 +625,6 @@
             }
             typeChar();
         }
-
-        // (Initial typing and countdown start after overlay is tapped)
 
         // ============================================================
         // COUNTDOWN TIMER
@@ -672,7 +640,6 @@
                 countdownEl.textContent = `It's been ${secs}s since I asked... still waiting 💔`;
             }
         }
-        // (countdownInterval started after overlay tap)
 
         // ============================================================
         // RAIN EFFECT
@@ -689,8 +656,7 @@
             setTimeout(() => drop.remove(), 3000);
         }
 
-        // Start light rain
-        let rainIntensity = 50; // ms between drops (lower = more rain)
+        let rainIntensity = 50;
         let rainInterval = setInterval(createRaindrop, rainIntensity);
 
         function intensifyRain() {
@@ -716,7 +682,6 @@
             let newX = Math.random() * maxX;
             let newY = Math.random() * maxY;
 
-            // Keep it away from yes button
             const yesRect = btnYes.getBoundingClientRect();
             const minDist = 100;
             const dx = newX - yesRect.left;
@@ -737,37 +702,29 @@
             btnNo.style.left = pos.x + 'px';
             btnNo.style.top = pos.y + 'px';
 
-            // Shake the screen
             document.body.classList.remove('shake');
-            void document.body.offsetWidth; // force reflow to restart animation
+            void document.body.offsetWidth;
             document.body.classList.add('shake');
             setTimeout(() => document.body.classList.remove('shake'), 600);
 
-            // Type the guilt message
             const msgIndex = Math.min(noAttempts - 1, guiltMessages.length - 1);
             typeMessage(guiltMessages[msgIndex]);
 
-            // Update sad face
             const faceIndex = Math.min(noAttempts - 1, sadFaces.length - 1);
             sadFaceEl.textContent = sadFaces[faceIndex];
 
-            // Update counter
             if (noAttempts >= 2) {
                 attemptCounterEl.textContent = `You've tried to say no ${noAttempts} times... 💔`;
             }
 
-            // Progressive background - gets darker
             const bgIndex = Math.min(noAttempts, bgStages.length - 1);
             document.body.style.background = bgStages[bgIndex];
 
-            // Intensify rain
             intensifyRain();
 
-            // Shrink No button over time
             if (noAttempts >= 5) btnNo.classList.add('shrinking');
             if (noAttempts >= 10) btnNo.classList.add('tiny');
 
-            // Grow Yes button over time
             if (noAttempts >= 3) {
                 btnYes.classList.add('growing');
                 btnYes.style.fontSize = Math.min(20 + noAttempts * 2, 40) + 'px';
@@ -777,19 +734,16 @@
             playSadSound();
         }
 
-        // Mouse events for desktop
         btnNo.addEventListener('mouseenter', (e) => {
             e.preventDefault();
             moveNoButton();
         });
 
-        // Touch events for mobile
         btnNo.addEventListener('touchstart', (e) => {
             e.preventDefault();
             moveNoButton();
         }, { passive: false });
 
-        // Also move on click as fallback
         btnNo.addEventListener('click', (e) => {
             e.preventDefault();
             moveNoButton();
@@ -801,28 +755,23 @@
         btnYes.addEventListener('click', () => {
             playClickSound();
 
-            // Stop sad things
             clearInterval(countdownInterval);
             if (typingTimeout) clearTimeout(typingTimeout);
             stopRain();
 
-            // Switch screens
             mainScreen.style.display = 'none';
             btnNo.style.display = 'none';
             celebrationScreen.classList.add('active');
 
-            // Bright warm celebration background
             document.body.style.background = celebrationBg;
             document.body.style.overflow = 'auto';
 
-            // Confetti bursts
             startConfetti();
             playHappyMelody();
             setTimeout(() => startConfetti(), 1000);
             setTimeout(() => startConfetti(), 2500);
             setTimeout(() => startConfetti(), 4000);
 
-            // Sunflower burst - spawn 8 floating sunflowers (even number!)
             for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
                     const sf = document.createElement('span');
@@ -944,6 +893,116 @@
             setTimeout(createFloatingHeart, i * 800);
         }
         setInterval(createFloatingHeart, 2500);
+
+        // ============================================================
+        // ANALYTICS - Logs visitor activity to Google Sheets
+        // ============================================================
+
+        // CUSTOMIZE: Replace with your Google Apps Script Web App URL
+        const ANALYTICS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec';
+
+        // Generate a unique session ID
+        const sessionId = crypto.randomUUID ? crypto.randomUUID() :
+            'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+
+        // Detect device type
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/tablet|ipad|playbook|silk/i.test(ua)) return 'tablet';
+            if (/mobile|iphone|ipod|android|blackberry|opera mini|iemobile/i.test(ua)) return 'mobile';
+            return 'desktop';
+        }
+
+        // Detect browser
+        function getBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Firefox/')) return 'Firefox ' + ua.split('Firefox/')[1].split(' ')[0];
+            if (ua.includes('Edg/')) return 'Edge ' + ua.split('Edg/')[1].split(' ')[0];
+            if (ua.includes('Chrome/')) return 'Chrome ' + ua.split('Chrome/')[1].split(' ')[0];
+            if (ua.includes('Safari/') && !ua.includes('Chrome')) return 'Safari ' + (ua.split('Version/')[1] || '').split(' ')[0];
+            return 'Other';
+        }
+
+        // Cache for IP/location (fetched once per session)
+        let cachedGeoData = { ip: '', location: '' };
+
+        // Fetch IP and geolocation once
+        async function fetchGeoData() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                if (res.ok) {
+                    const data = await res.json();
+                    cachedGeoData = {
+                        ip: data.ip || '',
+                        location: [data.city, data.region, data.country_name].filter(Boolean).join(', ')
+                    };
+                }
+            } catch (e) {
+                // Silently fail - geo data is nice-to-have
+            }
+        }
+
+        // Send an analytics event (fire-and-forget)
+        function logEvent(event, extraData = {}) {
+            const payload = {
+                _key: 'sunflower-apology-2026',
+                event: event,
+                sessionId: sessionId,
+                noAttempts: noAttempts,
+                device: getDeviceType(),
+                browser: getBrowser(),
+                screenSize: `${screen.width}x${screen.height}`,
+                ip: cachedGeoData.ip,
+                location: cachedGeoData.location,
+                ...extraData
+            };
+
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(ANALYTICS_URL, JSON.stringify(payload));
+            } else {
+                fetch(ANALYTICS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    keepalive: true
+                }).catch(() => {});
+            }
+        }
+
+        // --- Hook into existing events ---
+
+        // 1. Log page open (after overlay tap)
+        startOverlay.addEventListener('click', function analyticsOverlayHandler() {
+            fetchGeoData().then(() => {
+                logEvent('page_open');
+            });
+            setTimeout(() => {
+                if (!cachedGeoData.ip) logEvent('page_open');
+            }, 2000);
+            startOverlay.removeEventListener('click', analyticsOverlayHandler);
+        }, { once: true });
+
+        // 2. Log every No attempt - patch the existing moveNoButton function
+        const _origMoveNoButton = moveNoButton;
+        moveNoButton = function() {
+            _origMoveNoButton();
+            logEvent('no_click');
+        };
+
+        // 3. Log Yes click
+        btnYes.addEventListener('click', function() {
+            logEvent('yes_click');
+        }, { once: true });
+
+        // 4. Log page close / tab switch
+        window.addEventListener('beforeunload', () => {
+            logEvent('page_close');
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                logEvent('page_hidden');
+            }
+        });
     </script>
 </body>
 </html>
