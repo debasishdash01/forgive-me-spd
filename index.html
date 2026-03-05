@@ -442,7 +442,7 @@
             <p>I promise to be better. Not just in words — in actions. You deserve a friend who shows up properly, and that's exactly what I'm going to be.</p>
             <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
             <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
-            <p class="signature">Your favorite(!?) idiot maglu, <br><!-- CUSTOMIZE: Replace with your name -->Debasish 🌻</p>
+            <p class="signature">Your favorite(?!) idiot maglu, <br><!-- CUSTOMIZE: Replace with your name -->Not Lord Voldemort, Debasish 🌻</p>
         </div>
     </div>
 
@@ -608,8 +608,12 @@
         const startOverlay = document.getElementById('start-overlay');
         startOverlay.addEventListener('click', () => {
             startOverlay.style.display = 'none';
-            bgMusic.play().catch(() => {});
+            bgMusic.play().catch(e => console.warn('Audio play failed:', e));
             getAudioCtx();
+            // Start the experience only after overlay is tapped
+            startTime = Date.now();
+            typeMessage(guiltMessages[0]);
+            countdownInterval = setInterval(updateCountdown, 1000);
         });
 
         // --- Sound toggle ---
@@ -652,8 +656,7 @@
             typeChar();
         }
 
-        // Type the initial message
-        typeMessage(guiltMessages[0]);
+        // (Initial typing and countdown start after overlay is tapped)
 
         // ============================================================
         // COUNTDOWN TIMER
@@ -669,7 +672,7 @@
                 countdownEl.textContent = `It's been ${secs}s since I asked... still waiting 💔`;
             }
         }
-        countdownInterval = setInterval(updateCountdown, 1000);
+        // (countdownInterval started after overlay tap)
 
         // ============================================================
         // RAIN EFFECT
