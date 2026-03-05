@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>I'm Sorry...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+            padding: 20px;
+            transition: background 1s ease;
+        }
+
+        /* Shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-8px) rotate(-1deg); }
+            20% { transform: translateX(8px) rotate(1deg); }
+            30% { transform: translateX(-6px) rotate(-0.5deg); }
+            40% { transform: translateX(6px) rotate(0.5deg); }
+            50% { transform: translateX(-4px); }
+            60% { transform: translateX(4px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+        }
+
+        body.shake {
+            animation: shake 0.6s ease-in-out;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sad-face {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .guilt-message {
+            font-size: 18px;
+            margin-bottom: 15px;
+            min-height: 60px;
+            font-style: italic;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .guilt-message .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #fff;
+            margin-left: 2px;
+            animation: blink 0.7s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .countdown {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+            min-height: 18px;
+        }
+
+        .attempt-counter {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            min-height: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c38;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(67, 233, 123, 0.6);
+        }
+
+        .btn-yes.growing {
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #5c1a2a;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            position: relative;
+            transition: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .btn-no.shrinking {
+            font-size: 14px;
+            padding: 8px 20px;
+        }
+
+        .btn-no.tiny {
+            font-size: 10px;
+            padding: 5px 12px;
+        }
+
+        /* Rain effect */
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .raindrop {
+            position: absolute;
+            top: -20px;
+            width: 2px;
+            background: linear-gradient(transparent, rgba(174, 194, 224, 0.5));
+            border-radius: 0 0 2px 2px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+
+        .rain-container.sunshine .raindrop {
+            display: none;
+        }
+
+        /* Sunshine rays */
+        .sunshine-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 2s ease;
+            background: radial-gradient(ellipse at 50% 0%, rgba(255,223,96,0.3) 0%, transparent 60%);
+        }
+
+        .sunshine-overlay.active {
+            opacity: 1;
+        }
+
+        /* Celebration screen */
+        .celebration {
+            display: none;
+            text-align: center;
+            z-index: 20;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .celebration.active {
+            display: block;
+        }
+
+        .celebration .big-heart {
+            font-size: 100px;
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.2); }
+        }
+
+        .celebration .thank-you {
+            font-size: 36px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .celebration .love-message {
+            font-size: 20px;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.5s;
+        }
+
+        /* Apology letter */
+        .apology-letter {
+            margin-top: 30px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.8;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 1.5s;
+            border: 1px solid rgba(255,255,255,0.2);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .apology-letter p {
+            margin-bottom: 15px;
+        }
+
+        .apology-letter .signature {
+            text-align: right;
+            font-style: italic;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Canvas for confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Floating hearts background */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 20px;
+            opacity: 0.3;
+            animation: riseUp linear infinite;
+        }
+
+        @keyframes riseUp {
+            to {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sunflower ring on celebration */
+        .sunflower-ring {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 1s;
+        }
+
+        .sunflower-ring span {
+            font-size: 30px;
+            animation: sunflowerSway 2s ease-in-out infinite;
+        }
+
+        .sunflower-ring span:nth-child(even) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes sunflowerSway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Floating sunflower */
+        .floating-sunflower {
+            position: absolute;
+            bottom: -50px;
+            font-size: 24px;
+            opacity: 0.4;
+            animation: riseUp linear infinite;
+        }
+
+        /* Sound toggle */
+        .sound-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="floating-hearts"></div>
+    <div class="rain-container" id="rain-container"></div>
+    <div class="sunshine-overlay" id="sunshine-overlay"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔇</button>
+
+    <div class="container" id="main-screen">
+        <div class="sad-face" id="sad-face">🥺</div>
+        <h1 class="title" id="title">Will you forgive me, <span id="name-display">Sunshine</span>?</h1>
+        <p class="guilt-message" id="guilt-message"></p>
+        <p class="countdown" id="countdown"></p>
+        <p class="attempt-counter" id="attempt-counter"></p>
+        <div class="buttons">
+            <button class="btn btn-yes" id="btn-yes">Yes</button>
+            <button class="btn btn-no" id="btn-no">No</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration-screen">
+        <div class="big-heart">💖</div>
+        <h1 class="thank-you">Thank You, <span id="name-celebration">Sunshine</span>!</h1>
+        <p class="love-message">You're the best friend anyone could ever ask for.</p>
+
+        <!-- 8 sunflowers (even number - sunflower theory) -->
+        <div class="sunflower-ring">
+            <span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span>
+        </div>
+
+        <div class="apology-letter">
+            <!-- CUSTOMIZE: Edit this apology letter with your own words -->
+            <p>Dear <span class="letter-name">Sunshine</span>,</p>
+            <p>Okay look — I know I messed up. Big time. And I've been dramatically overthinking about it ever since (you know how I get).</p>
+            <p>You didn't deserve that, and I'm genuinely, truly, deeply sorry. Our friendship is literally one of the best things that's ever happened to me, and the thought of losing it makes me want to throw my phone into the ocean.</p>
+            <p>Nobody gets me like you do. Nobody makes me laugh like you do. And honestly? Nobody else could pull off being this mad and still look that good doing it 😏</p>
+            <p>I promise to be better. Not just in words — in actions. You deserve a friend who shows up properly, and that's exactly what I'm going to be.</p>
+            <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
+            <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
+            <p class="signature">Your favorite idiot, <br><!-- CUSTOMIZE: Replace with your name -->You Know Who 🌻</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION - Customize these values!
+        // ============================================================
+
+        // CUSTOMIZE: Change this to the person's name / nickname
+        const PERSON_NAME = "Sunshine";
+
+        // Personalized guilt messages (uses PERSON_NAME automatically)
+        const guiltMessages = [
+            `I know I messed up, and I'm truly sorry, ${PERSON_NAME}...`,
+            `Please ${PERSON_NAME}... you know I didn't mean it like that.`,
+            `I literally cannot function knowing you're mad at me.`,
+            `${PERSON_NAME}, you're my favorite person. I can't lose you over this.`,
+            `I'd do anything to take it back. ANYTHING. Name your price.`,
+            `I haven't eaten properly since this happened... okay maybe I have, but EMOTIONALLY I'm starving.`,
+            `Come on, who else is gonna hype you up like I do? 😏`,
+            `I haven't been able to sleep thinking about this... you owe me beauty sleep now.`,
+            `${PERSON_NAME}, who's gonna tolerate my nonsense if not you?! Nobody's that cute AND patient.`,
+            `I'm literally on my knees right now... 🧎 is that not doing it for you??`,
+            `Okay ${PERSON_NAME}, I'm NOT giving up. You're stuck with me whether you like it or not.`,
+            `Even the No button is tired of running from you. Can't blame it though 👀`,
+            `I will spam you with sunflowers until the end of time if I have to. 🌻🌻🌻`,
+            `I BUILT AN ENTIRE WEBSITE TO SAY SORRY. If that's not iconic, idk what is.`,
+            `Fine, the No button is basically invisible now. Just like your ability to stay mad at me 😅`
+        ];
+
+        const sadFaces = ["🥺", "😢", "😭", "💔", "😞", "🥹", "😿", "🫠", "😔", "🪦", "😭", "💀", "🥀", "😩", "🫶"];
+
+        // Progressive background colors (gets darker/sadder with each No attempt)
+        const bgStages = [
+            "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",   // initial - calm purple
+            "linear-gradient(135deg, #5b6abf 0%, #6a4199 100%)",   // slightly darker
+            "linear-gradient(135deg, #4f5da4 0%, #5e3890 100%)",   // darker
+            "linear-gradient(135deg, #434f89 0%, #522f87 100%)",   // getting moody
+            "linear-gradient(135deg, #37416e 0%, #46267e 100%)",   // dark
+            "linear-gradient(135deg, #2b3353 0%, #3a1d75 100%)",   // very dark
+            "linear-gradient(135deg, #1f2538 0%, #2e146c 100%)",   // almost black
+            "linear-gradient(135deg, #191d2b 0%, #220b5a 100%)",   // near pitch
+            "linear-gradient(135deg, #12151e 0%, #160448 100%)",   // super dark
+            "linear-gradient(135deg, #0a0d14 0%, #0a0236 100%)"    // nearly black
+        ];
+
+        // Celebration background (bright and warm)
+        const celebrationBg = "linear-gradient(135deg, #f6d365 0%, #fda085 50%, #f093fb 100%)";
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let noAttempts = 0;
+        let soundEnabled = false;
+        let audioCtx = null;
+        let typingTimeout = null;
+        let startTime = Date.now();
+        let countdownInterval = null;
+
+        // ============================================================
+        // DOM ELEMENTS
+        // ============================================================
+        const btnYes = document.getElementById('btn-yes');
+        const btnNo = document.getElementById('btn-no');
+        const guiltMessageEl = document.getElementById('guilt-message');
+        const attemptCounterEl = document.getElementById('attempt-counter');
+        const countdownEl = document.getElementById('countdown');
+        const sadFaceEl = document.getElementById('sad-face');
+        const mainScreen = document.getElementById('main-screen');
+        const celebrationScreen = document.getElementById('celebration-screen');
+        const soundToggle = document.getElementById('sound-toggle');
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        const rainContainer = document.getElementById('rain-container');
+        const sunshineOverlay = document.getElementById('sunshine-overlay');
+
+        // Set personalized name in all places
+        document.getElementById('name-display').textContent = PERSON_NAME;
+        document.getElementById('name-celebration').textContent = PERSON_NAME;
+        document.querySelector('.letter-name').textContent = PERSON_NAME;
+
+        // ============================================================
+        // AUDIO
+        // ============================================================
+        // CUSTOMIZE SOUNDS: Replace playSadSound() and playHappyMelody()
+        // with your own audio files. Example:
+        //
+        //   const sadAudio = new Audio('path/to/sad-sound.mp3');
+        //   const happyAudio = new Audio('path/to/happy-sound.mp3');
+        //
+        //   function playSadSound() {
+        //       if (!soundEnabled) return;
+        //       sadAudio.currentTime = 0;
+        //       sadAudio.play();
+        //   }
+        //
+        //   function playHappyMelody() {
+        //       if (!soundEnabled) return;
+        //       happyAudio.currentTime = 0;
+        //       happyAudio.play();
+        //   }
+        //
+        // You can use free sounds from https://freesound.org or
+        // https://mixkit.co/free-sound-effects/
+        // Place the .mp3 files in the same folder as index.html
+        // ============================================================
+
+        function getAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playTone(freq, duration, type = 'sine', volume = 0.15) {
+            if (!soundEnabled) return;
+            try {
+                const ac = getAudioCtx();
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(volume, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start();
+                osc.stop(ac.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // SAD SOUND - plays when they try to click No
+        // (Replace this function body with custom audio - see instructions above)
+        function playSadSound() {
+            playTone(400, 0.3, 'sine', 0.1);
+            setTimeout(() => playTone(350, 0.3, 'sine', 0.1), 150);
+            setTimeout(() => playTone(300, 0.5, 'sine', 0.1), 300);
+        }
+
+        // HAPPY SOUND - plays when they click Yes
+        // (Replace this function body with custom audio - see instructions above)
+        function playHappyMelody() {
+            if (!soundEnabled) return;
+            const notes = [523, 587, 659, 698, 784, 880, 988, 1047];
+            notes.forEach((freq, i) => {
+                setTimeout(() => playTone(freq, 0.4, 'sine', 0.12), i * 150);
+            });
+            setTimeout(() => {
+                const harmony = [659, 784, 880, 1047, 1175, 1319];
+                harmony.forEach((freq, i) => {
+                    setTimeout(() => playTone(freq, 0.5, 'triangle', 0.08), i * 200);
+                });
+            }, 1200);
+        }
+
+        function playClickSound() {
+            playTone(800, 0.08, 'square', 0.05);
+        }
+
+        // --- Sound toggle ---
+        soundToggle.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled) {
+                getAudioCtx();
+                playTone(600, 0.15, 'sine', 0.1);
+            }
+        });
+
+        // ============================================================
+        // TYPING EFFECT
+        // ============================================================
+        function typeMessage(text, callback) {
+            if (typingTimeout) clearTimeout(typingTimeout);
+            guiltMessageEl.innerHTML = '<span class="cursor"></span>';
+            let i = 0;
+
+            function typeChar() {
+                if (i < text.length) {
+                    // Insert character before the cursor
+                    const cursor = guiltMessageEl.querySelector('.cursor');
+                    const charSpan = document.createTextNode(text[i]);
+                    guiltMessageEl.insertBefore(charSpan, cursor);
+                    i++;
+                    typingTimeout = setTimeout(typeChar, 35 + Math.random() * 25);
+                } else {
+                    // Remove cursor after typing finishes
+                    setTimeout(() => {
+                        const cursor = guiltMessageEl.querySelector('.cursor');
+                        if (cursor) cursor.remove();
+                    }, 1500);
+                    if (callback) callback();
+                }
+            }
+            typeChar();
+        }
+
+        // Type the initial message
+        typeMessage(guiltMessages[0]);
+
+        // ============================================================
+        // COUNTDOWN TIMER
+        // ============================================================
+        function updateCountdown() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            if (elapsed < 5) return;
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            if (mins > 0) {
+                countdownEl.textContent = `It's been ${mins}m ${secs}s since I asked... still waiting 💔`;
+            } else {
+                countdownEl.textContent = `It's been ${secs}s since I asked... still waiting 💔`;
+            }
+        }
+        countdownInterval = setInterval(updateCountdown, 1000);
+
+        // ============================================================
+        // RAIN EFFECT
+        // ============================================================
+        function createRaindrop() {
+            const drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.height = (Math.random() * 20 + 10) + 'px';
+            drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+            drop.style.animationDelay = Math.random() * 0.5 + 's';
+            drop.style.opacity = Math.random() * 0.3 + 0.1;
+            rainContainer.appendChild(drop);
+            setTimeout(() => drop.remove(), 3000);
+        }
+
+        // Start light rain
+        let rainIntensity = 50; // ms between drops (lower = more rain)
+        let rainInterval = setInterval(createRaindrop, rainIntensity);
+
+        function intensifyRain() {
+            clearInterval(rainInterval);
+            rainIntensity = Math.max(10, 50 - noAttempts * 5);
+            rainInterval = setInterval(createRaindrop, rainIntensity);
+        }
+
+        function stopRain() {
+            clearInterval(rainInterval);
+            rainContainer.innerHTML = '';
+            sunshineOverlay.classList.add('active');
+        }
+
+        // ============================================================
+        // RUNAWAY NO BUTTON
+        // ============================================================
+        function getRandomPosition() {
+            const btnRect = btnNo.getBoundingClientRect();
+            const maxX = window.innerWidth - btnRect.width - 20;
+            const maxY = window.innerHeight - btnRect.height - 20;
+
+            let newX = Math.random() * maxX;
+            let newY = Math.random() * maxY;
+
+            // Keep it away from yes button
+            const yesRect = btnYes.getBoundingClientRect();
+            const minDist = 100;
+            const dx = newX - yesRect.left;
+            const dy = newY - yesRect.top;
+            if (Math.sqrt(dx*dx + dy*dy) < minDist) {
+                newX = (newX + maxX / 2) % maxX;
+                newY = (newY + maxY / 2) % maxY;
+            }
+
+            return { x: Math.max(10, newX), y: Math.max(10, newY) };
+        }
+
+        function moveNoButton() {
+            noAttempts++;
+
+            const pos = getRandomPosition();
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = pos.x + 'px';
+            btnNo.style.top = pos.y + 'px';
+
+            // Shake the screen
+            document.body.classList.remove('shake');
+            void document.body.offsetWidth; // force reflow to restart animation
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 600);
+
+            // Type the guilt message
+            const msgIndex = Math.min(noAttempts - 1, guiltMessages.length - 1);
+            typeMessage(guiltMessages[msgIndex]);
+
+            // Update sad face
+            const faceIndex = Math.min(noAttempts - 1, sadFaces.length - 1);
+            sadFaceEl.textContent = sadFaces[faceIndex];
+
+            // Update counter
+            if (noAttempts >= 2) {
+                attemptCounterEl.textContent = `You've tried to say no ${noAttempts} times... 💔`;
+            }
+
+            // Progressive background - gets darker
+            const bgIndex = Math.min(noAttempts, bgStages.length - 1);
+            document.body.style.background = bgStages[bgIndex];
+
+            // Intensify rain
+            intensifyRain();
+
+            // Shrink No button over time
+            if (noAttempts >= 5) btnNo.classList.add('shrinking');
+            if (noAttempts >= 10) btnNo.classList.add('tiny');
+
+            // Grow Yes button over time
+            if (noAttempts >= 3) {
+                btnYes.classList.add('growing');
+                btnYes.style.fontSize = Math.min(20 + noAttempts * 2, 40) + 'px';
+                btnYes.style.padding = `${Math.min(15 + noAttempts * 2, 30)}px ${Math.min(40 + noAttempts * 3, 80)}px`;
+            }
+
+            playSadSound();
+        }
+
+        // Mouse events for desktop
+        btnNo.addEventListener('mouseenter', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        // Touch events for mobile
+        btnNo.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        }, { passive: false });
+
+        // Also move on click as fallback
+        btnNo.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        // ============================================================
+        // YES BUTTON - CELEBRATION
+        // ============================================================
+        btnYes.addEventListener('click', () => {
+            playClickSound();
+
+            // Stop sad things
+            clearInterval(countdownInterval);
+            if (typingTimeout) clearTimeout(typingTimeout);
+            stopRain();
+
+            // Switch screens
+            mainScreen.style.display = 'none';
+            btnNo.style.display = 'none';
+            celebrationScreen.classList.add('active');
+
+            // Bright warm celebration background
+            document.body.style.background = celebrationBg;
+            document.body.style.overflow = 'auto';
+
+            // Confetti bursts
+            startConfetti();
+            playHappyMelody();
+            setTimeout(() => startConfetti(), 1000);
+            setTimeout(() => startConfetti(), 2500);
+            setTimeout(() => startConfetti(), 4000);
+
+            // Sunflower burst - spawn 8 floating sunflowers (even number!)
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const sf = document.createElement('span');
+                    sf.className = 'floating-sunflower';
+                    sf.textContent = '🌻';
+                    sf.style.left = (10 + Math.random() * 80) + '%';
+                    sf.style.fontSize = (28 + Math.random() * 16) + 'px';
+                    sf.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                    sf.style.opacity = '0.6';
+                    document.getElementById('floating-hearts').appendChild(sf);
+                    setTimeout(() => sf.remove(), 14000);
+                }, i * 400);
+            }
+        });
+
+        // ============================================================
+        // CONFETTI SYSTEM
+        // ============================================================
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const confettiPieces = [];
+        const confettiColors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#01a3a4', '#f368e0', '#ff6348', '#7bed9f'];
+        const confettiShapes = ['circle', 'rect', 'heart'];
+
+        function createConfettiPiece() {
+            return {
+                x: Math.random() * canvas.width,
+                y: -20,
+                size: Math.random() * 10 + 5,
+                color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                shape: confettiShapes[Math.floor(Math.random() * confettiShapes.length)],
+                speedY: Math.random() * 3 + 2,
+                speedX: (Math.random() - 0.5) * 4,
+                rotation: Math.random() * 360,
+                rotationSpeed: (Math.random() - 0.5) * 10,
+                opacity: 1
+            };
+        }
+
+        function drawHeart(x, y, size, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation * Math.PI / 180);
+            ctx.beginPath();
+            const s = size / 2;
+            ctx.moveTo(0, s * 0.4);
+            ctx.bezierCurveTo(-s, -s * 0.4, -s, s * 0.6, 0, s);
+            ctx.bezierCurveTo(s, s * 0.6, s, -s * 0.4, 0, s * 0.4);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function startConfetti() {
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => confettiPieces.push(createConfettiPiece()), i * 30);
+            }
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = confettiPieces.length - 1; i >= 0; i--) {
+                const p = confettiPieces[i];
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotationSpeed;
+                p.speedX *= 0.99;
+
+                if (p.y > canvas.height + 20) {
+                    confettiPieces.splice(i, 1);
+                    continue;
+                }
+
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+
+                if (p.shape === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (p.shape === 'rect') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+                    ctx.restore();
+                } else if (p.shape === 'heart') {
+                    drawHeart(p.x, p.y, p.size, p.rotation);
+                }
+            }
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animateConfetti);
+        }
+        animateConfetti();
+
+        // ============================================================
+        // FLOATING HEARTS BACKGROUND
+        // ============================================================
+        function createFloatingHeart() {
+            const heart = document.createElement('span');
+            heart.className = 'floating-heart';
+            heart.textContent = ['💕', '💗', '🌻', '✨', '🤍', '🌻', '💜', '💓'][Math.floor(Math.random() * 8)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.fontSize = (Math.random() * 15 + 12) + 'px';
+            heart.style.animationDuration = (Math.random() * 8 + 8) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('floating-hearts').appendChild(heart);
+            setTimeout(() => heart.remove(), 18000);
+        }
+
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createFloatingHeart, i * 800);
+        }
+        setInterval(createFloatingHeart, 2500);
+    </script>
+</body>
+</html>
