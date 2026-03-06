@@ -238,12 +238,94 @@
             display: none;
             text-align: center;
             z-index: 20;
-            max-width: 500px;
             width: 100%;
         }
 
         .celebration.active {
             display: block;
+        }
+
+        /* Each celebration section is a full-viewport panel */
+        .celeb-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            max-width: 520px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .celeb-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .celeb-section .section-next {
+            margin-top: 30px;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-family: inherit;
+            font-weight: bold;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+
+        .celeb-section .section-next:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+            transform: scale(1.05);
+        }
+
+        @keyframes gentlePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+            50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+        }
+
+        /* Section nav dots */
+        .celeb-nav {
+            position: fixed;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 300;
+        }
+
+        .celeb-nav.active {
+            display: flex;
+        }
+
+        .celeb-nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .celeb-nav-dot.current {
+            background: #fff;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
         }
 
         .celebration .big-heart {
@@ -267,15 +349,11 @@
         .celebration .love-message {
             font-size: 20px;
             line-height: 1.6;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 0.5s;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
         }
 
         /* Apology letter */
         .apology-letter {
-            margin-top: 30px;
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -284,14 +362,12 @@
             text-align: left;
             font-size: 16px;
             line-height: 1.8;
-            max-height: 350px;
+            max-height: 60vh;
             overflow-y: auto;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 1.5s;
             border: 1px solid rgba(255,255,255,0.25);
             -webkit-overflow-scrolling: touch;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            width: 100%;
         }
 
         .apology-letter p {
@@ -355,9 +431,6 @@
             gap: 4px;
             margin: 15px 0;
             flex-wrap: wrap;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 1s;
         }
 
         .sunflower-ring span {
@@ -651,14 +724,11 @@
 
         /* Reasons I Value You - Flashcards */
         .reasons-section {
-            margin-top: 40px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 2s;
             background: rgba(0,0,0,0.12);
             border-radius: 24px;
             padding: 28px 20px 24px;
             border: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
         }
 
         .reasons-title {
@@ -677,15 +747,15 @@
 
         .reasons-deck {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            max-width: 420px;
+            max-width: 460px;
             margin: 0 auto;
         }
 
         @media (max-width: 480px) {
             .reasons-deck {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
         }
@@ -708,7 +778,7 @@
         .reason-card-inner {
             position: relative;
             width: 100%;
-            aspect-ratio: 1;
+            aspect-ratio: 3 / 4;
             transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
             transform-style: preserve-3d;
         }
@@ -728,6 +798,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         .reason-card-front {
@@ -760,14 +831,15 @@
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: #1a3a2a;
             transform: rotateY(180deg);
-            padding: 10px;
+            padding: 12px 10px;
             text-align: center;
-            font-size: 11px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.45;
             font-style: italic;
             font-weight: 600;
             box-shadow: 0 3px 15px rgba(67, 233, 123, 0.3);
             border: 1px solid rgba(255,255,255,0.3);
+            word-break: break-word;
         }
 
         .reasons-progress {
@@ -841,10 +913,7 @@
 
         /* Share section */
         .share-section {
-            margin-top: 40px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 3s;
+            width: 100%;
         }
 
         .dramatic-thank-note {
@@ -1182,53 +1251,75 @@
         </p>
     </div>
 
+    <!-- Section nav dots (right side) -->
+    <div class="celeb-nav" id="celeb-nav">
+        <div class="celeb-nav-dot current" data-section="0"></div>
+        <div class="celeb-nav-dot" data-section="1"></div>
+        <div class="celeb-nav-dot" data-section="2"></div>
+        <div class="celeb-nav-dot" data-section="3"></div>
+    </div>
+
     <div class="celebration" id="celebration-screen">
-        <div class="big-heart">💖</div>
-        <h1 class="thank-you">Thank You, <span id="name-celebration">Shibapriya</span>!</h1>
-        <p class="love-message">You're the best friend anyone could ever ask for.</p>
 
-        <!-- 8 sunflowers (even number - sunflower theory) -->
-        <div class="sunflower-ring">
-            <span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span>
+        <!-- Section 1: Thank You -->
+        <div class="celeb-section" id="celeb-0">
+            <div class="big-heart">💖</div>
+            <h1 class="thank-you">Thank You, <span id="name-celebration">Shibapriya</span>!</h1>
+            <p class="love-message">You're the best friend anyone could ever ask for.</p>
+            <div class="sunflower-ring">
+                <span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span><span>🌻</span>
+            </div>
+            <button class="section-next" data-next="1">Read my letter</button>
         </div>
 
-        <div class="apology-letter">
-            <!-- CUSTOMIZE: Edit this apology letter with your own words -->
-            <p>Dear <span class="letter-name">Shibapriya</span>,</p>
-            <p>Okay look — I know I messed up. Big time. And I've been dramatically overthinking about it ever since (you know how I get).</p>
-            <p>You didn't deserve that, and I'm genuinely, truly, deeply sorry. Our friendship is literally one of the best things that's ever happened to me, and the thought of losing it makes me want to throw my phone into the ocean.</p>
-            <p>Nobody gets me like you do. Nobody makes me laugh like you do. And honestly? Nobody else could pull off being this mad and still look that good doing it 😏</p>
-            <p>I promise to be better. Not just in words — in actions. You deserve a friend who shows up properly, and that's exactly what I'm going to be.</p>
-            <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
-            <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
-            <p class="signature">Your favorite(?!) idiot maglu, <br><!-- CUSTOMIZE: Replace with your name -->Not Lord Voldemort, Debasish 🌻</p>
+        <!-- Section 2: Apology Letter -->
+        <div class="celeb-section" id="celeb-1">
+            <div class="apology-letter">
+                <p>Dear <span class="letter-name">Shibapriya</span>,</p>
+                <p>Okay look — I know I messed up. Big time. And I've been dramatically overthinking about it ever since (you know how I get).</p>
+                <p>You didn't deserve that, and I'm genuinely, truly, deeply sorry. Our friendship is literally one of the best things that's ever happened to me, and the thought of losing it makes me want to throw my phone into the ocean.</p>
+                <p>Nobody gets me like you do. Nobody makes me laugh like you do. And honestly? Nobody else could pull off being this mad and still look that good doing it 😏</p>
+                <p>I promise to be better. Not just in words — in actions. You deserve a friend who shows up properly, and that's exactly what I'm going to be.</p>
+                <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
+                <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
+                <p class="signature">Your favorite(?!) idiot maglu, <br>Not Lord Voldemort, Debasish 🌻</p>
+            </div>
+            <button class="section-next" data-next="2">See why I value you</button>
         </div>
 
-        <div class="reasons-section" id="reasons-section">
-            <p class="reasons-title">🌻 Reasons I Value You 🌻</p>
-            <p class="reasons-subtitle">Watch them reveal, or tap ahead to peek early!</p>
-            <div class="reasons-deck" id="reasons-deck"></div>
-            <div class="reasons-progress">
-                <div class="reasons-progress-track">
-                    <div class="reasons-progress-fill" id="reasons-progress-fill"></div>
+        <!-- Section 3: Reasons I Value You -->
+        <div class="celeb-section" id="celeb-2">
+            <div class="reasons-section" id="reasons-section">
+                <p class="reasons-title">🌻 Reasons I Value You 🌻</p>
+                <p class="reasons-subtitle">Watch them reveal, or tap ahead to peek early!</p>
+                <div class="reasons-deck" id="reasons-deck"></div>
+                <div class="reasons-progress">
+                    <div class="reasons-progress-track">
+                        <div class="reasons-progress-fill" id="reasons-progress-fill"></div>
+                    </div>
+                    <span class="reasons-progress-text" id="reasons-progress-text">0 / 12</span>
                 </div>
-                <span class="reasons-progress-text" id="reasons-progress-text">0 / 12</span>
+            </div>
+            <button class="section-next" data-next="3">Your certificate awaits</button>
+        </div>
+
+        <!-- Section 4: Forgiveness Certificate + Share -->
+        <div class="celeb-section" id="celeb-3">
+            <div class="share-section">
+                <div class="dramatic-thank-note">
+                    <p class="dramatic-header">🌻 OFFICIAL FORGIVENESS CERTIFICATE 🌻</p>
+                    <p>Let it be known to the entire universe that on this blessed day,
+                    <strong><span class="letter-name">Shibapriya</span></strong> — in an act of extraordinary grace
+                    and unmatched kindness — has officially forgiven <strong>Debasish</strong>,
+                    who frankly did NOT deserve it but is eternally grateful anyway.</p>
+                    <p style="margin-top: 10px; opacity: 0.8;">This act of mercy has been witnessed by the internet,
+                    the sunflowers, and at least one very dramatic website. 🌻💛</p>
+                </div>
+                <button class="btn-share" id="btn-share">📸 Screenshot & Share This Moment</button>
+                <p class="share-copied" id="share-copied"></p>
             </div>
         </div>
 
-        <div class="share-section">
-            <div class="dramatic-thank-note">
-                <p class="dramatic-header">🌻 OFFICIAL FORGIVENESS CERTIFICATE 🌻</p>
-                <p>Let it be known to the entire universe that on this blessed day,
-                <strong><span class="letter-name">Shibapriya</span></strong> — in an act of extraordinary grace
-                and unmatched kindness — has officially forgiven <strong>Debasish</strong>,
-                who frankly did NOT deserve it but is eternally grateful anyway.</p>
-                <p style="margin-top: 10px; opacity: 0.8;">This act of mercy has been witnessed by the internet,
-                the sunflowers, and at least one very dramatic website. 🌻💛</p>
-            </div>
-            <button class="btn-share" id="btn-share">📸 Screenshot & Share This Moment</button>
-            <p class="share-copied" id="share-copied"></p>
-        </div>
     </div>
 
     <script>
@@ -1838,6 +1929,75 @@
         // ============================================================
         // YES BUTTON - CELEBRATION
         // ============================================================
+        const celebSections = document.querySelectorAll('.celeb-section');
+        const celebNav = document.getElementById('celeb-nav');
+        const celebNavDots = document.querySelectorAll('.celeb-nav-dot');
+        let reasonsRevealed = false;
+
+        function showCelebSection(index) {
+            // Mark section visible
+            const section = document.getElementById('celeb-' + index);
+            if (!section) return;
+            section.classList.add('visible');
+
+            // Update nav dots
+            celebNavDots.forEach((dot, i) => {
+                dot.classList.toggle('current', i === index);
+            });
+
+            // Scroll to section smoothly
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Trigger flashcard reveal when reasons section appears
+            if (index === 2 && !reasonsRevealed) {
+                reasonsRevealed = true;
+                setTimeout(startHybridReveal, 600);
+            }
+
+            // Extra confetti burst on certificate
+            if (index === 3) {
+                startConfetti();
+            }
+        }
+
+        // Next buttons
+        document.querySelectorAll('.section-next').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nextIndex = parseInt(btn.dataset.next);
+                showCelebSection(nextIndex);
+                playClickSound();
+            });
+        });
+
+        // Nav dot clicks
+        celebNavDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const idx = parseInt(dot.dataset.section);
+                const section = document.getElementById('celeb-' + idx);
+                if (section && section.classList.contains('visible')) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    celebNavDots.forEach((d, i) => d.classList.toggle('current', i === idx));
+                }
+            });
+        });
+
+        // Update nav dots on scroll
+        function updateNavOnScroll() {
+            let closest = 0;
+            let closestDist = Infinity;
+            celebSections.forEach((section, i) => {
+                if (!section.classList.contains('visible')) return;
+                const rect = section.getBoundingClientRect();
+                const dist = Math.abs(rect.top);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = i;
+                }
+            });
+            celebNavDots.forEach((dot, i) => dot.classList.toggle('current', i === closest));
+        }
+        window.addEventListener('scroll', updateNavOnScroll, { passive: true });
+
         btnYes.addEventListener('click', () => {
             playClickSound();
 
@@ -1848,15 +2008,20 @@
             mainScreen.style.display = 'none';
             btnNo.style.display = 'none';
             celebrationScreen.classList.add('active');
+            celebNav.classList.add('active');
 
             document.body.style.background = celebrationBg;
             document.body.style.overflow = 'auto';
+            document.body.style.justifyContent = 'flex-start';
+            document.body.style.padding = '0';
+
+            // Show first section with a slight delay for drama
+            setTimeout(() => showCelebSection(0), 300);
 
             startConfetti();
             playHappyMelody();
             setTimeout(() => startConfetti(), 1000);
             setTimeout(() => startConfetti(), 2500);
-            setTimeout(() => startConfetti(), 4000);
 
             for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
@@ -1871,9 +2036,6 @@
                     setTimeout(() => sf.remove(), 14000);
                 }, i * 400);
             }
-
-            // Start hybrid flashcard reveal after the section fades in (~2s animation-delay)
-            setTimeout(startHybridReveal, 2500);
         });
 
         // ============================================================
@@ -1882,7 +2044,7 @@
         document.getElementById('btn-share').addEventListener('click', async () => {
             const shareData = {
                 title: 'I Got Forgiven! 🌻',
-                text: `BREAKING NEWS: ${PERSON_NAME} has officially forgiven Debasish after he built an ENTIRE website to apologize. ${noAttempts > 0 ? `She tried to say No ${noAttempts} time(s) but eventually caved. ` : ''}Iconic behavior only. 🌻💛`,
+                text: `BREAKING NEWS: ${PERSON_NAME} has officially forgiven Debasish after he built an ENTIRE website to apologize. ${totalNoAttempts > 0 ? `She tried to say No ${totalNoAttempts} time(s) but eventually caved. ` : ''}Iconic behavior only. 🌻💛`,
             };
 
             const shareCopied = document.getElementById('share-copied');
@@ -2124,12 +2286,13 @@
         // --- Hook into existing events ---
 
         // 1. Show consent banner after overlay tap (if no prior choice stored)
+        let pageOpenLogged = false;
         function startAnalytics() {
             fetchGeoData().then(() => {
-                logEvent('page_open');
+                if (!pageOpenLogged) { pageOpenLogged = true; logEvent('page_open'); }
             });
             setTimeout(() => {
-                if (!cachedGeoData.ip) logEvent('page_open');
+                if (!pageOpenLogged) { pageOpenLogged = true; logEvent('page_open'); }
             }, 2000);
         }
 
@@ -2315,6 +2478,8 @@
         startOverlay.addEventListener('click', () => {
             if (analyticsConsent === 'accepted') {
                 setTimeout(fetchVisitorCount, 1500);
+            } else if (analyticsConsent === 'declined') {
+                setTimeout(showFallbackCounter, 1500);
             }
         });
     </script>
