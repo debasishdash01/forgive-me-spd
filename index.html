@@ -539,7 +539,7 @@
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
             z-index: 9500;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -547,10 +547,13 @@
             text-align: center;
             padding: 30px;
             font-family: Georgia, serif;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .final-plea-overlay.active {
-            display: flex;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .final-plea-overlay .plea-emoji {
@@ -563,18 +566,12 @@
             font-size: 26px;
             margin-bottom: 15px;
             text-shadow: 0 0 20px rgba(255,0,68,0.6);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.5s;
         }
 
         .final-plea-overlay .plea-text {
             font-size: 17px;
             line-height: 1.7;
             max-width: 440px;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 1.2s;
             font-style: italic;
         }
 
@@ -590,9 +587,6 @@
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: #1a5c38;
             box-shadow: 0 4px 20px rgba(67, 233, 123, 0.5);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards, pulse 1.5s ease-in-out infinite;
-            animation-delay: 2s, 2.8s;
         }
 
         .final-plea-overlay .plea-no-btn {
@@ -605,10 +599,6 @@
             font-family: inherit;
             background: transparent;
             color: rgba(255,255,255,0.35);
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 3.5s;
-            transition: transform 0.2s ease;
         }
 
         .final-plea-overlay .plea-no-btn:hover {
@@ -618,12 +608,43 @@
         .final-plea-overlay .plea-round-msg {
             margin-top: 12px;
             font-size: 13px;
-            opacity: 0;
             color: rgba(255,255,255,0.5);
             font-style: italic;
             min-height: 20px;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 3.8s;
+        }
+
+        /* Staggered fade-in for plea elements */
+        .final-plea-overlay .plea-title,
+        .final-plea-overlay .plea-text,
+        .final-plea-overlay .plea-btn,
+        .final-plea-overlay .plea-no-btn,
+        .final-plea-overlay .plea-round-msg {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .final-plea-overlay.active .plea-title {
+            opacity: 1; transform: translateY(0);
+            transition-delay: 0.5s;
+        }
+        .final-plea-overlay.active .plea-text {
+            opacity: 1; transform: translateY(0);
+            transition-delay: 1.2s;
+        }
+        .final-plea-overlay.active .plea-btn {
+            opacity: 1; transform: translateY(0);
+            transition-delay: 2s;
+            animation: pulse 1.5s ease-in-out infinite;
+            animation-delay: 2.8s;
+        }
+        .final-plea-overlay.active .plea-no-btn {
+            opacity: 1; transform: translateY(0);
+            transition-delay: 3.5s;
+        }
+        .final-plea-overlay.active .plea-round-msg {
+            opacity: 1; transform: translateY(0);
+            transition-delay: 3.8s;
         }
 
         /* Reasons I Value You cards */
@@ -842,17 +863,21 @@
             padding: 16px 20px;
             font-size: 13px;
             line-height: 1.5;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             flex-wrap: wrap;
             text-align: center;
             border-top: 1px solid rgba(255,255,255,0.15);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
         }
 
         .consent-banner.active {
-            display: flex;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         .consent-banner p {
@@ -1628,6 +1653,7 @@
 
             // Restart rain & countdown
             intensifyRain();
+            clearInterval(countdownInterval);
             startTime = Date.now();
             countdownInterval = setInterval(updateCountdown, 1000);
 
