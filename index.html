@@ -595,6 +595,37 @@
             animation-delay: 2s, 2.8s;
         }
 
+        .final-plea-overlay .plea-no-btn {
+            margin-top: 16px;
+            padding: 8px 20px;
+            font-size: 11px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            background: transparent;
+            color: rgba(255,255,255,0.35);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 3.5s;
+            transition: transform 0.2s ease;
+        }
+
+        .final-plea-overlay .plea-no-btn:hover {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .final-plea-overlay .plea-round-msg {
+            margin-top: 12px;
+            font-size: 13px;
+            opacity: 0;
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+            min-height: 20px;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 3.8s;
+        }
+
         /* Reasons I Value You cards */
         .reasons-section {
             margin-top: 30px;
@@ -797,6 +828,118 @@
             align-items: center;
             justify-content: center;
         }
+        /* GDPR consent banner */
+        .consent-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            z-index: 10000;
+            padding: 16px 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .consent-banner.active {
+            display: flex;
+        }
+
+        .consent-banner p {
+            max-width: 480px;
+            opacity: 0.9;
+        }
+
+        .consent-banner .consent-buttons {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .consent-banner button {
+            padding: 12px 24px;
+            border-radius: 20px;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px;
+        }
+
+        .consent-banner .consent-accept {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c38;
+        }
+
+        .consent-banner .consent-decline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* When consent banner is active, hide visitor counter to avoid overlap */
+        body.consent-showing .visitor-counter {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* Mobile-specific: plea buttons need proper touch targets */
+        .final-plea-overlay .plea-btn,
+        .final-plea-overlay .plea-no-btn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .final-plea-overlay .plea-no-btn:active {
+            color: rgba(255,255,255,0.6);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* Mobile layout adjustments */
+        @media (max-width: 480px) {
+            .consent-banner {
+                flex-direction: column;
+                padding: 14px 16px 20px;
+                gap: 10px;
+            }
+            .consent-banner p {
+                font-size: 12px;
+            }
+            .consent-banner .consent-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            .consent-banner button {
+                flex: 1;
+                max-width: 140px;
+            }
+            .final-plea-overlay .plea-text {
+                font-size: 15px;
+                padding: 0 10px;
+            }
+            .final-plea-overlay .plea-btn {
+                padding: 14px 36px;
+                font-size: 18px;
+            }
+            .final-plea-overlay .plea-no-btn {
+                padding: 10px 24px;
+                font-size: 12px;
+                min-height: 44px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -870,7 +1013,7 @@
     <div class="final-plea-overlay" id="final-plea">
         <div class="plea-emoji">💔🧎</div>
         <h1 class="plea-title">You Broke Me. Literally.</h1>
-        <p class="plea-text">
+        <p class="plea-text" id="plea-text">
             The screen cracked. The website crashed. My heart is in pieces on the floor.<br><br>
             15 times, <strong><span class="letter-name">Shibapriya</span></strong>. FIFTEEN TIMES you said no.<br><br>
             I have nothing left. No tricks. No jokes. No runaway buttons.<br>
@@ -878,12 +1021,23 @@
             Will you please, <em>please</em> forgive me? 🌻
         </p>
         <button class="plea-btn" id="plea-yes-btn">Okay fine... Yes 💛</button>
+        <button class="plea-no-btn" id="plea-no-btn">Still No.</button>
+        <p class="plea-round-msg" id="plea-round-msg"></p>
     </div>
 
     <!-- Visitor counter -->
     <div class="visitor-counter" id="visitor-counter">
         <span class="visitor-dot"></span>
         <span id="visitor-text">Loading...</span>
+    </div>
+
+    <!-- GDPR consent banner -->
+    <div class="consent-banner" id="consent-banner">
+        <p>This site collects anonymous analytics data (device type, browser, approximate location, IP address) to count visitors. Data is stored in Google Sheets and not shared with third parties. You can withdraw consent anytime by clearing your browser's local storage. Compliant with GDPR (EU) and DPDP Act (India).</p>
+        <div class="consent-buttons">
+            <button class="consent-accept" id="consent-accept">Accept</button>
+            <button class="consent-decline" id="consent-decline">Decline</button>
+        </div>
     </div>
 
     <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
@@ -1016,6 +1170,8 @@
         // STATE
         // ============================================================
         let noAttempts = 0;
+        let totalNoAttempts = 0;
+        let round = 1;
         let soundEnabled = true;
         let audioCtx = null;
         const bgMusic = document.getElementById('bg-music');
@@ -1289,6 +1445,53 @@
             if (noAttempts >= 15) {
                 triggerScreenBreak();
             }
+
+            // --- Progressive buildup effects (No 3-14) ---
+            if (noAttempts >= 3 && noAttempts < 15) {
+                // Progress from 0.0 (No 3) to 1.0 (No 14)
+                const progress = (noAttempts - 3) / 11;
+
+                // Increasingly desaturate & darken via filter
+                const grayscale = Math.round(progress * 40);
+                const brightness = 1 - progress * 0.3;
+                document.body.style.filter = `grayscale(${grayscale}%) brightness(${brightness})`;
+
+                // Brief glitch flash on each No click (longer as it progresses)
+                const flashDuration = 80 + progress * 320;
+                document.body.classList.add('glitching');
+                setTimeout(() => {
+                    if (!screenBroken) document.body.classList.remove('glitching');
+                }, flashDuration);
+
+                // Stress sound — pitch drops, volume rises
+                const stressPitch = 150 - progress * 80;
+                const stressVol = 0.05 + progress * 0.12;
+                playTone(stressPitch, 0.1 + progress * 0.2, 'square', stressVol);
+
+                // Speed up micro-glitch animation as damage increases
+                document.body.style.animationDuration = (3 - progress * 2) + 's';
+
+                // Screen flicker at higher damage (No 9+): brief blackout
+                if (noAttempts >= 9) {
+                    const flickerDelay = 300 + Math.random() * 400;
+                    setTimeout(() => {
+                        if (screenBroken) return;
+                        document.body.style.opacity = '0';
+                        setTimeout(() => { document.body.style.opacity = '1'; }, 60 + progress * 80);
+                    }, flickerDelay);
+                }
+
+                // At No 12+: double-flicker for extra dread
+                if (noAttempts >= 12) {
+                    setTimeout(() => {
+                        if (screenBroken) return;
+                        document.body.style.opacity = '0';
+                        setTimeout(() => { document.body.style.opacity = '1'; }, 50);
+                        setTimeout(() => { document.body.style.opacity = '0'; }, 150);
+                        setTimeout(() => { document.body.style.opacity = '1'; }, 220);
+                    }, 800);
+                }
+            }
         }
 
         function triggerScreenBreak() {
@@ -1298,6 +1501,8 @@
             // Show final crack stage
             crackOverlay.className = 'crack-overlay stage-4';
             document.body.classList.remove('micro-glitch');
+            document.body.style.filter = '';
+            document.body.style.animationDuration = '';
 
             // Phase 1: Heavy glitch
             document.body.classList.add('glitching');
@@ -1319,6 +1524,18 @@
             setTimeout(() => {
                 crackOverlay.className = 'crack-overlay';
                 mainScreen.style.display = 'none';
+
+                // Update plea text for current round
+                if (round > 1) {
+                    const pleaTexts = [
+                        `Round ${round}. The screen broke AGAIN.<br><br>${totalNoAttempts} total No's, <strong>${PERSON_NAME}</strong>. You're setting records in cruelty.<br><br>The website rebuilt itself just to beg you one more time...<br><br>Please? 🌻`,
+                        `Round ${round}. At this point the website has PTSD.<br><br>${totalNoAttempts} No's and counting. <strong>${PERSON_NAME}</strong>, historians will write about your stubbornness.<br><br>I literally have nothing left. My code is crying. My CSS is in therapy.<br><br>Just... yes? Please? 🌻`,
+                        `Round ${round}. This is getting ridiculous.<br><br><strong>${PERSON_NAME}</strong>, you've said No ${totalNoAttempts} times. The internet is watching. The sunflowers are wilting.<br><br>Even the No button filed for emotional damages.<br><br>Have mercy. 🌻`,
+                    ];
+                    const textIndex = Math.min(round - 2, pleaTexts.length - 1);
+                    document.getElementById('plea-text').innerHTML = pleaTexts[textIndex];
+                }
+
                 document.getElementById('final-plea').classList.add('active');
             }, 3000);
         }
@@ -1330,6 +1547,8 @@
             document.body.classList.remove('glitching');
             document.body.classList.remove('micro-glitch');
             document.body.style.transition = '';
+            document.body.style.filter = '';
+            document.body.style.animationDuration = '';
             mainScreen.style.display = '';
             mainScreen.style.opacity = '';
             mainScreen.style.transition = '';
@@ -1337,8 +1556,104 @@
             btnYes.click();
         });
 
+        // Round-specific plea messages
+        const pleaRoundMessages = [
+            "",
+            "You survived round 1... but can your conscience survive round 2?",
+            "Round 3?! At this point you're speedrunning heartbreak.",
+            "You're actually going AGAIN?! This is a record of cruelty.",
+            "I genuinely don't know what else to do. You win. But also... please? 🌻",
+            "Okay, this is just bullying now. I respect the commitment though."
+        ];
+
+        // Wire up the "Still No" button — restart the game with escalation
+        document.getElementById('plea-no-btn').addEventListener('click', () => {
+            round++;
+            const pleaOverlay = document.getElementById('final-plea');
+
+            // Reset all visual state
+            pleaOverlay.classList.remove('active');
+            crackOverlay.className = 'crack-overlay';
+            document.body.classList.remove('glitching');
+            document.body.classList.remove('micro-glitch');
+            document.body.style.transition = '';
+            document.body.style.filter = '';
+            document.body.style.animationDuration = '';
+            document.body.style.opacity = '';
+
+            // Reset game state (but keep totalNoAttempts for analytics)
+            noAttempts = 0;
+            screenBroken = false;
+            currentCrackStage = 0;
+
+            // Reset main screen
+            mainScreen.style.display = '';
+            mainScreen.style.opacity = '';
+            mainScreen.style.transition = '';
+            document.body.style.background = bgStages[0];
+
+            // Reset No button — but make it harder each round
+            btnNo.style.display = '';
+            btnNo.style.position = '';
+            btnNo.style.left = '';
+            btnNo.style.top = '';
+            btnNo.style.zIndex = '';
+            btnNo.classList.remove('shrinking', 'tiny');
+            // Each round: No button starts smaller
+            const roundScale = Math.max(0.4, 1 - (round - 1) * 0.15);
+            btnNo.style.transform = `scale(${roundScale})`;
+
+            // Yes button stays big from previous rounds and grows more
+            const yesBaseSize = Math.min(20 + round * 6, 48);
+            btnYes.style.fontSize = yesBaseSize + 'px';
+            btnYes.style.padding = `${Math.min(15 + round * 4, 35)}px ${Math.min(40 + round * 8, 90)}px`;
+            btnYes.classList.add('growing');
+
+            // Reset emoji & counters
+            sadFaceEl.textContent = '🥺';
+            attemptCounterEl.textContent = `Round ${round} — ${totalNoAttempts} total No's and counting...`;
+            countdownEl.textContent = '';
+            guiltMessageEl.textContent = '';
+
+            // Reset guilt meter visuals (but start higher each round)
+            const startPercent = Math.min((round - 1) * 20, 60);
+            meterFill.style.width = startPercent + '%';
+            meterPercent.textContent = startPercent + '%';
+            meterFill.style.background = '';
+            meterStatus.style.fontWeight = '';
+            meterStatus.style.opacity = '';
+            meterStatus.textContent = round >= 3
+                ? `Round ${round}. The guilt never resets.`
+                : `Starting round ${round} with residual guilt...`;
+
+            // Restart rain & countdown
+            intensifyRain();
+            startTime = Date.now();
+            countdownInterval = setInterval(updateCountdown, 1000);
+
+            // Type a round-specific opener
+            const roundOpeners = [
+                `Back for round ${round}? I admire your cruelty, ${PERSON_NAME}.`,
+                `Round ${round}. The screen healed. My heart hasn't.`,
+                `You really broke the website AND came back for more?!`,
+                `At this point I think you ENJOY watching me suffer.`,
+                `Round ${round}. I'm running out of screen to crack, ${PERSON_NAME}.`,
+                `The website respawned but the emotional damage is permanent.`
+            ];
+            const openerIndex = Math.min(round - 2, roundOpeners.length - 1);
+            typeMessage(roundOpeners[openerIndex]);
+
+            // Update the plea overlay for next break
+            const pleaRoundMsg = document.getElementById('plea-round-msg');
+            const msgIndex = Math.min(round, pleaRoundMessages.length - 1);
+            pleaRoundMsg.textContent = pleaRoundMessages[msgIndex];
+
+            playTone(200, 0.3, 'triangle', 0.1);
+        });
+
         function moveNoButton() {
             noAttempts++;
+            totalNoAttempts++;
 
             const pos = getRandomPosition();
             btnNo.style.position = 'fixed';
@@ -1358,7 +1673,8 @@
             sadFaceEl.textContent = sadFaces[faceIndex];
 
             if (noAttempts >= 2) {
-                attemptCounterEl.textContent = `You've tried to say no ${noAttempts} times... 💔`;
+                const roundLabel = round > 1 ? ` (Round ${round} — ${totalNoAttempts} total)` : '';
+                attemptCounterEl.textContent = `You've tried to say no ${noAttempts} times${roundLabel}... 💔`;
             }
 
             const bgIndex = Math.min(noAttempts, bgStages.length - 1);
@@ -1380,20 +1696,32 @@
             playSadSound();
         }
 
-        btnNo.addEventListener('mouseenter', (e) => {
-            e.preventDefault();
-            moveNoButton();
-        });
+        // Detect if device supports touch (most mobile devices)
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-        btnNo.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            moveNoButton();
-        }, { passive: false });
-
-        btnNo.addEventListener('click', (e) => {
-            e.preventDefault();
-            moveNoButton();
-        });
+        if (isTouchDevice) {
+            // Mobile: dodge on touchstart — use flag to prevent double-fire from click
+            let touchHandled = false;
+            btnNo.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touchHandled = true;
+                moveNoButton();
+                // Reset flag after event cycle completes
+                setTimeout(() => { touchHandled = false; }, 300);
+            }, { passive: false });
+            // Click fallback for accessibility (screen readers etc.)
+            btnNo.addEventListener('click', (e) => {
+                if (touchHandled) return; // Already handled by touchstart
+                e.preventDefault();
+                moveNoButton();
+            });
+        } else {
+            // Desktop: dodge on hover (mouseenter) — no click needed
+            btnNo.addEventListener('mouseenter', (e) => {
+                e.preventDefault();
+                moveNoButton();
+            });
+        }
 
         // ============================================================
         // YES BUTTON - CELEBRATION
@@ -1585,6 +1913,12 @@
         // CUSTOMIZE: Replace with your Google Apps Script Web App URL
         const ANALYTICS_URL = 'https://script.google.com/macros/s/AKfycbyUow2iyqnnzcmTZ-T0unuP_iAVDEvY4w88M-PSxMIbIt43PIOLqk2vQxCn4Jioi2Bt1w/exec';
 
+        // GDPR/DPDP consent state
+        let analyticsConsent = localStorage.getItem('apology_analytics_consent');
+        const consentBanner = document.getElementById('consent-banner');
+        const consentAcceptBtn = document.getElementById('consent-accept');
+        const consentDeclineBtn = document.getElementById('consent-decline');
+
         // Generate a unique session ID
         const sessionId = crypto.randomUUID ? crypto.randomUUID() :
             'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
@@ -1612,6 +1946,7 @@
 
         // Fetch IP and geolocation once
         async function fetchGeoData() {
+            if (analyticsConsent !== 'accepted') return;
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 if (res.ok) {
@@ -1628,6 +1963,7 @@
 
         // Send an analytics event (fire-and-forget)
         function logEvent(event, extraData = {}) {
+            if (analyticsConsent !== 'accepted') return;
             const payload = {
                 _key: 'sunflower-apology-2026',
                 event: event,
@@ -1672,16 +2008,47 @@
 
         // --- Hook into existing events ---
 
-        // 1. Log page open (after overlay tap)
-        startOverlay.addEventListener('click', function analyticsOverlayHandler() {
+        // 1. Show consent banner after overlay tap (if no prior choice stored)
+        function startAnalytics() {
             fetchGeoData().then(() => {
                 logEvent('page_open');
             });
             setTimeout(() => {
                 if (!cachedGeoData.ip) logEvent('page_open');
             }, 2000);
+        }
+
+        startOverlay.addEventListener('click', function analyticsOverlayHandler() {
+            if (analyticsConsent === 'accepted') {
+                startAnalytics();
+            } else if (!analyticsConsent) {
+                // No prior choice — show consent banner
+                setTimeout(() => {
+                    consentBanner.classList.add('active');
+                    document.body.classList.add('consent-showing');
+                }, 800);
+            }
+            // If 'declined', do nothing
             startOverlay.removeEventListener('click', analyticsOverlayHandler);
         }, { once: true });
+
+        // Consent button handlers
+        consentAcceptBtn.addEventListener('click', () => {
+            analyticsConsent = 'accepted';
+            localStorage.setItem('apology_analytics_consent', 'accepted');
+            consentBanner.classList.remove('active');
+            document.body.classList.remove('consent-showing');
+            startAnalytics();
+            fetchVisitorCount();
+        });
+
+        consentDeclineBtn.addEventListener('click', () => {
+            analyticsConsent = 'declined';
+            localStorage.setItem('apology_analytics_consent', 'declined');
+            consentBanner.classList.remove('active');
+            document.body.classList.remove('consent-showing');
+            showFallbackCounter();
+        });
 
         // 2. Log every No attempt - patch the existing moveNoButton function
         const _origMoveNoButton = moveNoButton;
@@ -1696,9 +2063,16 @@
         }, { once: true });
 
         // 4. Log page close / tab switch
-        window.addEventListener('beforeunload', () => {
+        // Use both beforeunload (desktop) and pagehide (mobile Safari)
+        // with a flag to prevent double-logging
+        let pageCloseLogged = false;
+        function handlePageClose() {
+            if (pageCloseLogged) return;
+            pageCloseLogged = true;
             logEvent('page_close');
-        });
+        }
+        window.addEventListener('beforeunload', handlePageClose);
+        window.addEventListener('pagehide', handlePageClose);
 
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') {
@@ -1777,6 +2151,10 @@
         const visitorText = document.getElementById('visitor-text');
 
         async function fetchVisitorCount() {
+            if (analyticsConsent !== 'accepted') {
+                showFallbackCounter();
+                return;
+            }
             try {
                 const res = await fetch(ANALYTICS_URL + '?action=count&_key=sunflower-apology-2026');
                 if (res.ok) {
@@ -1805,9 +2183,11 @@
             visitorCounter.classList.add('visible');
         }
 
-        // Fetch count after overlay tap
+        // Fetch count after overlay tap (only if already consented)
         startOverlay.addEventListener('click', () => {
-            setTimeout(fetchVisitorCount, 1500);
+            if (analyticsConsent === 'accepted') {
+                setTimeout(fetchVisitorCount, 1500);
+            }
         });
     </script>
 </body>
