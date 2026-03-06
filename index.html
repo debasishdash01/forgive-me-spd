@@ -270,26 +270,28 @@
             opacity: 0;
             animation: fadeInUp 1s ease forwards;
             animation-delay: 0.5s;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
         }
 
         /* Apology letter */
         .apology-letter {
             margin-top: 30px;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
             padding: 30px 25px;
             text-align: left;
             font-size: 16px;
             line-height: 1.8;
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
             opacity: 0;
             animation: fadeInUp 1s ease forwards;
             animation-delay: 1.5s;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.25);
             -webkit-overflow-scrolling: touch;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
         .apology-letter p {
@@ -647,81 +649,157 @@
             transition-delay: 3.8s;
         }
 
-        /* Reasons I Value You cards */
+        /* Reasons I Value You - Flashcards */
         .reasons-section {
-            margin-top: 30px;
+            margin-top: 40px;
             opacity: 0;
             animation: fadeInUp 1s ease forwards;
             animation-delay: 2s;
+            background: rgba(0,0,0,0.12);
+            border-radius: 24px;
+            padding: 28px 20px 24px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .reasons-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
-            margin-bottom: 16px;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
         }
 
+        .reasons-subtitle {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+
         .reasons-deck {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             max-width: 420px;
             margin: 0 auto;
         }
 
+        @media (max-width: 480px) {
+            .reasons-deck {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+        }
+
         .reason-card {
-            background: rgba(255,255,255,0.13);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 16px;
-            padding: 16px 20px;
-            text-align: left;
-            font-size: 15px;
-            line-height: 1.5;
+            perspective: 600px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
             opacity: 0;
-            transform: translateY(20px) rotateX(10deg);
-            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-            cursor: default;
-            position: relative;
-            overflow: hidden;
+            transform: scale(0.7);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
         .reason-card.revealed {
             opacity: 1;
-            transform: translateY(0) rotateX(0);
+            transform: scale(1);
         }
 
-        .reason-card:hover {
-            transform: translateY(-2px) scale(1.02);
-            border-color: rgba(255,255,255,0.4);
+        .reason-card-inner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-style: preserve-3d;
         }
 
-        .reason-card .reason-number {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            line-height: 28px;
-            text-align: center;
-            font-size: 13px;
+        .reason-card.flipped .reason-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .reason-card-front,
+        .reason-card-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reason-card-front {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            box-shadow: 0 3px 12px rgba(118, 75, 162, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .reason-card-front .card-number {
+            font-size: 28px;
             font-weight: bold;
-            margin-right: 10px;
-            flex-shrink: 0;
+            opacity: 0.95;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        .reason-card .reason-text {
-            display: inline;
-        }
-
-        .reasons-tap-hint {
-            font-size: 12px;
+        .reason-card-front .card-tap {
+            font-size: 9px;
             opacity: 0.6;
-            margin-top: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .reason-card-front:active {
+            transform: scale(0.95);
+        }
+
+        .reason-card-back {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a3a2a;
+            transform: rotateY(180deg);
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.4;
             font-style: italic;
-            transition: opacity 0.3s;
+            font-weight: 600;
+            box-shadow: 0 3px 15px rgba(67, 233, 123, 0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .reasons-progress {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .reasons-progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .reasons-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .reasons-progress-text {
+            font-size: 12px;
+            opacity: 0.7;
+            white-space: nowrap;
         }
 
         /* Visitor counter */
@@ -763,32 +841,34 @@
 
         /* Share section */
         .share-section {
-            margin-top: 30px;
+            margin-top: 40px;
             opacity: 0;
             animation: fadeInUp 1s ease forwards;
             animation-delay: 3s;
         }
 
         .dramatic-thank-note {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 20px 22px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,215,0,0.12) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px 22px;
+            margin-bottom: 24px;
             font-size: 15px;
             line-height: 1.7;
             font-style: italic;
-            border: 1px solid rgba(255,255,255,0.25);
+            border: 2px solid rgba(255,215,0,0.3);
             text-align: center;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2);
         }
 
         .dramatic-thank-note .dramatic-header {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             font-style: normal;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
 
         .btn-share {
@@ -1126,8 +1206,14 @@
 
         <div class="reasons-section" id="reasons-section">
             <p class="reasons-title">🌻 Reasons I Value You 🌻</p>
+            <p class="reasons-subtitle">Watch them reveal, or tap ahead to peek early!</p>
             <div class="reasons-deck" id="reasons-deck"></div>
-            <p class="reasons-tap-hint" id="reasons-hint">Tap to reveal each reason...</p>
+            <div class="reasons-progress">
+                <div class="reasons-progress-track">
+                    <div class="reasons-progress-fill" id="reasons-progress-fill"></div>
+                </div>
+                <span class="reasons-progress-text" id="reasons-progress-text">0 / 12</span>
+            </div>
         </div>
 
         <div class="share-section">
@@ -1785,6 +1871,9 @@
                     setTimeout(() => sf.remove(), 14000);
                 }, i * 400);
             }
+
+            // Start hybrid flashcard reveal after the section fades in (~2s animation-delay)
+            setTimeout(startHybridReveal, 2500);
         });
 
         // ============================================================
@@ -2044,17 +2133,17 @@
             }, 2000);
         }
 
+        // Show consent banner immediately on page load if no prior choice
+        if (!analyticsConsent) {
+            consentBanner.classList.add('active');
+            document.body.classList.add('consent-showing');
+        }
+
         startOverlay.addEventListener('click', function analyticsOverlayHandler() {
             if (analyticsConsent === 'accepted') {
                 startAnalytics();
-            } else if (!analyticsConsent) {
-                // No prior choice — show consent banner
-                setTimeout(() => {
-                    consentBanner.classList.add('active');
-                    document.body.classList.add('consent-showing');
-                }, 800);
             }
-            // If 'declined', do nothing
+            // If 'declined' or not yet chosen, do nothing (consent banner handles it)
             startOverlay.removeEventListener('click', analyticsOverlayHandler);
         }, { once: true });
 
@@ -2064,8 +2153,11 @@
             localStorage.setItem('apology_analytics_consent', 'accepted');
             consentBanner.classList.remove('active');
             document.body.classList.remove('consent-showing');
-            startAnalytics();
-            fetchVisitorCount();
+            // Only start analytics if user has already tapped past the start overlay
+            if (startOverlay.style.display === 'none') {
+                startAnalytics();
+                fetchVisitorCount();
+            }
         });
 
         consentDeclineBtn.addEventListener('click', () => {
@@ -2124,51 +2216,61 @@
             "The world just makes more sense when you're in my corner. 🌻"
         ];
 
-        let reasonsRevealed = 0;
+        let reasonsFlipped = 0;
         const reasonsDeck = document.getElementById('reasons-deck');
-        const reasonsHint = document.getElementById('reasons-hint');
+        const reasonsProgressFill = document.getElementById('reasons-progress-fill');
+        const reasonsProgressText = document.getElementById('reasons-progress-text');
 
-        // Build hidden cards
+        function updateReasonsProgress() {
+            const pct = Math.round((reasonsFlipped / reasons.length) * 100);
+            reasonsProgressFill.style.width = pct + '%';
+            if (reasonsFlipped >= reasons.length) {
+                reasonsProgressText.textContent = "All revealed! 🌻";
+            } else {
+                reasonsProgressText.textContent = `${reasonsFlipped} / ${reasons.length}`;
+            }
+        }
+
+        function flipCard(card) {
+            if (card.classList.contains('flipped')) return;
+            card.classList.add('flipped');
+            reasonsFlipped++;
+            playTone(400 + reasonsFlipped * 50, 0.15, 'sine', 0.08);
+            updateReasonsProgress();
+        }
+
+        // Build flashcard tiles
         reasons.forEach((reason, i) => {
             const card = document.createElement('div');
             card.className = 'reason-card';
-            card.innerHTML = `<span class="reason-number">${i + 1}</span><span class="reason-text">${reason}</span>`;
+            card.innerHTML = `
+                <div class="reason-card-inner">
+                    <div class="reason-card-front">
+                        <span class="card-number">${i + 1}</span>
+                        <span class="card-tap">tap</span>
+                    </div>
+                    <div class="reason-card-back">${reason}</div>
+                </div>`;
+            // Manual tap flips immediately
+            card.addEventListener('click', () => flipCard(card));
             reasonsDeck.appendChild(card);
         });
 
-        // Reveal on tap/click
-        document.getElementById('reasons-section').addEventListener('click', () => {
-            const cards = reasonsDeck.querySelectorAll('.reason-card:not(.revealed)');
-            if (cards.length > 0) {
-                cards[0].classList.add('revealed');
-                reasonsRevealed++;
-                playTone(400 + reasonsRevealed * 50, 0.15, 'sine', 0.08);
-
-                if (reasonsRevealed >= reasons.length) {
-                    reasonsHint.textContent = "That's all of them. But the list never really ends. 🌻";
-                } else {
-                    reasonsHint.textContent = `${reasons.length - reasonsRevealed} more to reveal... keep tapping!`;
-                }
-            }
-        });
-
-        // Auto-reveal first 3 cards after celebration loads
-        btnYes.addEventListener('click', () => {
-            setTimeout(() => {
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        const cards = reasonsDeck.querySelectorAll('.reason-card:not(.revealed)');
-                        if (cards.length > 0) {
-                            cards[0].classList.add('revealed');
-                            reasonsRevealed++;
-                            if (reasonsRevealed < reasons.length) {
-                                reasonsHint.textContent = `${reasons.length - reasonsRevealed} more to reveal... keep tapping!`;
-                            }
-                        }
-                    }, i * 600);
-                }
-            }, 3000);
-        });
+        // Hybrid: auto-reveal cards one by one after celebration starts
+        // Cards pop in (revealed), then auto-flip with stagger
+        function startHybridReveal() {
+            const cards = reasonsDeck.querySelectorAll('.reason-card');
+            cards.forEach((card, i) => {
+                // Phase 1: pop-in reveal (card appears face-down)
+                setTimeout(() => {
+                    card.classList.add('revealed');
+                }, i * 200);
+                // Phase 2: auto-flip after a pause (1.5s after appear)
+                setTimeout(() => {
+                    flipCard(card);
+                }, i * 500 + 2000);
+            });
+        }
 
         // ============================================================
         // LIVE VISITOR COUNTER
