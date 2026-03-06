@@ -19,7 +19,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
             color: #fff;
             padding: 20px;
             transition: background 1s ease;
@@ -381,6 +381,403 @@
             animation: riseUp linear infinite;
         }
 
+        /* Guilt-o-meter */
+        .guilt-meter-wrapper {
+            margin-top: 18px;
+            max-width: 360px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .guilt-meter-wrapper.visible {
+            opacity: 1;
+        }
+
+        .guilt-meter-label {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .guilt-meter-label .meter-title {
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .guilt-meter-label .meter-percent {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .guilt-meter-track {
+            width: 100%;
+            height: 14px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .guilt-meter-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #43e97b, #f5576c, #ff0844);
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+
+        .guilt-meter-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255,255,255,0.3) 50%,
+                transparent 100%
+            );
+            animation: meterShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes meterShimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .guilt-meter-status {
+            font-size: 11px;
+            margin-top: 5px;
+            opacity: 0.7;
+            font-style: italic;
+            min-height: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Screen crack / glitch overlay */
+        .crack-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9000;
+            pointer-events: none;
+        }
+
+        .crack-overlay svg {
+            width: 100%; height: 100%;
+        }
+
+        .crack-overlay .crack-stage { display: none; }
+        .crack-overlay.stage-1 .crack-s1 { display: block; }
+        .crack-overlay.stage-2 .crack-s1,
+        .crack-overlay.stage-2 .crack-s2 { display: block; }
+        .crack-overlay.stage-3 .crack-s1,
+        .crack-overlay.stage-3 .crack-s2,
+        .crack-overlay.stage-3 .crack-s3 { display: block; }
+        .crack-overlay.stage-4 .crack-s1,
+        .crack-overlay.stage-4 .crack-s2,
+        .crack-overlay.stage-4 .crack-s3,
+        .crack-overlay.stage-4 .crack-s4 { display: block; }
+
+        @keyframes crackAppear {
+            from { opacity: 0; stroke-dashoffset: 200; }
+            to { opacity: 1; stroke-dashoffset: 0; }
+        }
+
+        .crack-overlay line {
+            stroke-dasharray: 200;
+            animation: crackAppear 0.4s ease forwards;
+        }
+
+        @keyframes glitchFlicker {
+            0%   { opacity: 1; transform: translate(0); filter: hue-rotate(0deg); }
+            10%  { opacity: 0.8; transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+            20%  { opacity: 1; transform: translate(2px, -1px); filter: hue-rotate(0deg); }
+            30%  { opacity: 0.6; transform: translate(0, 3px) skewX(2deg); filter: hue-rotate(180deg); }
+            40%  { opacity: 1; transform: translate(-2px, 0); filter: hue-rotate(0deg); }
+            50%  { opacity: 0.4; transform: translate(4px, -2px) skewX(-1deg); filter: hue-rotate(270deg); }
+            60%  { opacity: 1; transform: translate(0); filter: hue-rotate(0deg); }
+            70%  { opacity: 0.7; transform: translate(-1px, 2px); filter: hue-rotate(45deg); }
+            80%  { opacity: 1; transform: translate(1px, -1px); filter: hue-rotate(0deg); }
+            90%  { opacity: 0.5; transform: translate(-3px, 0) skewX(3deg); filter: hue-rotate(135deg); }
+            100% { opacity: 1; transform: translate(0); filter: hue-rotate(0deg); }
+        }
+
+        /* Micro-glitch: subtle jitter that gets worse */
+        @keyframes microGlitch {
+            0%, 90%, 100% { transform: translate(0); filter: none; }
+            92% { transform: translate(-2px, 1px); filter: hue-rotate(30deg); }
+            94% { transform: translate(1px, -1px); filter: none; }
+            96% { transform: translate(-1px, 0); filter: hue-rotate(-20deg); }
+            98% { transform: translate(2px, 1px); filter: none; }
+        }
+
+        body.micro-glitch {
+            animation: microGlitch 3s linear infinite;
+        }
+
+        body.glitching {
+            animation: glitchFlicker 0.4s linear infinite;
+        }
+
+        body.glitching .container {
+            animation: glitchFlicker 0.3s linear infinite reverse;
+        }
+
+        .final-plea-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+            padding: 30px;
+            font-family: Georgia, serif;
+        }
+
+        .final-plea-overlay.active {
+            display: flex;
+        }
+
+        .final-plea-overlay .plea-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+
+        .final-plea-overlay .plea-title {
+            font-size: 26px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255,0,68,0.6);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.5s;
+        }
+
+        .final-plea-overlay .plea-text {
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 440px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 1.2s;
+            font-style: italic;
+        }
+
+        .final-plea-overlay .plea-btn {
+            margin-top: 30px;
+            padding: 16px 50px;
+            font-size: 22px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c38;
+            box-shadow: 0 4px 20px rgba(67, 233, 123, 0.5);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards, pulse 1.5s ease-in-out infinite;
+            animation-delay: 2s, 2.8s;
+        }
+
+        /* Reasons I Value You cards */
+        .reasons-section {
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 2s;
+        }
+
+        .reasons-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .reasons-deck {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .reason-card {
+            background: rgba(255,255,255,0.13);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(20px) rotateX(10deg);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reason-card.revealed {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+
+        .reason-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .reason-card .reason-number {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .reason-card .reason-text {
+            display: inline;
+        }
+
+        .reasons-tap-hint {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 12px;
+            font-style: italic;
+            transition: opacity 0.3s;
+        }
+
+        /* Visitor counter */
+        .visitor-counter {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-size: 12px;
+            z-index: 150;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .visitor-counter.visible {
+            opacity: 1;
+        }
+
+        .visitor-dot {
+            width: 8px;
+            height: 8px;
+            background: #43e97b;
+            border-radius: 50%;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Share section */
+        .share-section {
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 3s;
+        }
+
+        .dramatic-thank-note {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.7;
+            font-style: italic;
+            border: 1px solid rgba(255,255,255,0.25);
+            text-align: center;
+        }
+
+        .dramatic-thank-note .dramatic-header {
+            font-size: 18px;
+            font-weight: bold;
+            font-style: normal;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-share {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            font-size: 17px;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(102, 126, 234, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-share:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.7);
+        }
+
+        .btn-share:active {
+            transform: scale(0.97);
+        }
+
+        .share-copied {
+            font-size: 13px;
+            opacity: 0;
+            margin-top: 10px;
+            transition: opacity 0.3s ease;
+            min-height: 20px;
+        }
+
+        .share-copied.visible {
+            opacity: 0.8;
+        }
+
         /* Sound toggle */
         .sound-toggle {
             position: fixed;
@@ -426,6 +823,69 @@
         <p style="font-size: 16px; opacity: 0.8;">Tap anywhere to open</p>
     </div>
 
+    <!-- Screen crack overlay — 4 progressive stages -->
+    <div class="crack-overlay" id="crack-overlay">
+        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <!-- Stage 1: First hairline crack (No 3-6) -->
+            <g class="crack-stage crack-s1">
+                <line x1="500" y1="0" x2="480" y2="200" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <line x1="480" y1="200" x2="460" y2="320" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+            </g>
+            <!-- Stage 2: Crack spreads (No 7-10) -->
+            <g class="crack-stage crack-s2">
+                <line x1="460" y1="320" x2="400" y2="480" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+                <line x1="460" y1="320" x2="540" y2="450" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+                <line x1="200" y1="300" x2="300" y2="400" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+                <line x1="300" y1="400" x2="350" y2="500" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+            </g>
+            <!-- Stage 3: Major fractures (No 11-14) -->
+            <g class="crack-stage crack-s3">
+                <line x1="400" y1="480" x2="320" y2="650" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                <line x1="400" y1="480" x2="450" y2="620" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                <line x1="540" y1="450" x2="650" y2="600" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+                <line x1="540" y1="450" x2="500" y2="650" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+                <line x1="750" y1="200" x2="700" y2="380" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <line x1="700" y1="380" x2="660" y2="500" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+                <line x1="350" y1="500" x2="280" y2="700" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+            </g>
+            <!-- Stage 4: Shattered — full break (No 15) -->
+            <g class="crack-stage crack-s4">
+                <line x1="320" y1="650" x2="250" y2="850" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                <line x1="650" y1="600" x2="750" y2="800" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+                <line x1="500" y1="650" x2="480" y2="900" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+                <line x1="250" y1="850" x2="180" y2="1000" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+                <line x1="750" y1="800" x2="830" y2="1000" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/>
+                <line x1="480" y1="900" x2="500" y2="1000" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                <line x1="100" y1="500" x2="200" y2="600" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                <line x1="200" y1="600" x2="250" y2="750" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+                <line x1="800" y1="450" x2="850" y2="600" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                <line x1="850" y1="600" x2="900" y2="800" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+                <line x1="450" y1="620" x2="380" y2="800" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                <line x1="660" y1="500" x2="720" y2="700" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+            </g>
+        </svg>
+    </div>
+
+    <!-- Final desperate plea after screen break -->
+    <div class="final-plea-overlay" id="final-plea">
+        <div class="plea-emoji">💔🧎</div>
+        <h1 class="plea-title">You Broke Me. Literally.</h1>
+        <p class="plea-text">
+            The screen cracked. The website crashed. My heart is in pieces on the floor.<br><br>
+            15 times, <strong><span class="letter-name">Shibapriya</span></strong>. FIFTEEN TIMES you said no.<br><br>
+            I have nothing left. No tricks. No jokes. No runaway buttons.<br>
+            Just me, asking one last time... from the ruins of this website...<br><br>
+            Will you please, <em>please</em> forgive me? 🌻
+        </p>
+        <button class="plea-btn" id="plea-yes-btn">Okay fine... Yes 💛</button>
+    </div>
+
+    <!-- Visitor counter -->
+    <div class="visitor-counter" id="visitor-counter">
+        <span class="visitor-dot"></span>
+        <span id="visitor-text">Loading...</span>
+    </div>
+
     <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">🔊</button>
 
     <div class="container" id="main-screen">
@@ -438,16 +898,27 @@
             <button class="btn btn-yes" id="btn-yes">Yes</button>
             <button class="btn btn-no" id="btn-no">No</button>
         </div>
+        <div class="guilt-meter-wrapper" id="guilt-meter">
+            <div class="guilt-meter-label">
+                <span class="meter-title">⚡ GUILT-O-METER</span>
+                <span class="meter-percent" id="meter-percent">0%</span>
+            </div>
+            <div class="guilt-meter-track">
+                <div class="guilt-meter-fill" id="meter-fill"></div>
+            </div>
+            <p class="guilt-meter-status" id="meter-status"></p>
+        </div>
+
                 <p class="friend-note">
-        ⚠️ If you're one of Shibapriya's friends and somehow ended up here…  
-        please do me a huge favor and tell her to forgive me.  
-        
+        ⚠️ If you're one of Shibapriya's friends and somehow ended up here…
+        please do me a huge favor and tell her to forgive me.
+
         I have already:
         <br>• Built an entire website
         <br>• Publicly embarrassed myself
-        <br>• And emotionally suffered for several business days 😭  
-        
-        At this point my fate is in your hands.  
+        <br>• And emotionally suffered for several business days 😭
+
+        At this point my fate is in your hands.
         Use your influence wisely. 🌻🌻
         </p>
     </div>
@@ -472,6 +943,26 @@
             <p>Thank you for even opening this page. The fact that you're reading this means you still care, and that already means the world to me.</p>
             <p>Here are 8 sunflowers for you 🌻 — because even numbers mean the feeling is mutual, and I want you to know I'll always have your back. Always.</p>
             <p class="signature">Your favorite(?!) idiot maglu, <br><!-- CUSTOMIZE: Replace with your name -->Not Lord Voldemort, Debasish 🌻</p>
+        </div>
+
+        <div class="reasons-section" id="reasons-section">
+            <p class="reasons-title">🌻 Reasons I Value You 🌻</p>
+            <div class="reasons-deck" id="reasons-deck"></div>
+            <p class="reasons-tap-hint" id="reasons-hint">Tap to reveal each reason...</p>
+        </div>
+
+        <div class="share-section">
+            <div class="dramatic-thank-note">
+                <p class="dramatic-header">🌻 OFFICIAL FORGIVENESS CERTIFICATE 🌻</p>
+                <p>Let it be known to the entire universe that on this blessed day,
+                <strong><span class="letter-name">Shibapriya</span></strong> — in an act of extraordinary grace
+                and unmatched kindness — has officially forgiven <strong>Debasish</strong>,
+                who frankly did NOT deserve it but is eternally grateful anyway.</p>
+                <p style="margin-top: 10px; opacity: 0.8;">This act of mercy has been witnessed by the internet,
+                the sunflowers, and at least one very dramatic website. 🌻💛</p>
+            </div>
+            <button class="btn-share" id="btn-share">📸 Screenshot & Share This Moment</button>
+            <p class="share-copied" id="share-copied"></p>
         </div>
     </div>
 
@@ -553,7 +1044,7 @@
         // Set personalized name in all places
         document.getElementById('name-display').textContent = PERSON_NAME;
         document.getElementById('name-celebration').textContent = PERSON_NAME;
-        document.querySelector('.letter-name').textContent = PERSON_NAME;
+        document.querySelectorAll('.letter-name').forEach(el => el.textContent = PERSON_NAME);
 
         // ============================================================
         // AUDIO
@@ -723,6 +1214,129 @@
             return { x: Math.max(10, newX), y: Math.max(10, newY) };
         }
 
+        // ============================================================
+        // GUILT-O-METER
+        // ============================================================
+        const guiltMeter = document.getElementById('guilt-meter');
+        const meterFill = document.getElementById('meter-fill');
+        const meterPercent = document.getElementById('meter-percent');
+        const meterStatus = document.getElementById('meter-status');
+        const MAX_GUILT = 15; // fills up fully at 15 No clicks (matches guilt messages count)
+
+        const guiltStatuses = [
+            "",
+            "Mild discomfort detected...",
+            "A faint tug on your conscience...",
+            "Guilt levels rising...",
+            "Your inner voice is whispering 'just forgive him'...",
+            "Conscience is kicking in...",
+            "Emotional damage: MODERATE",
+            "Resistance is weakening...",
+            "CRITICAL GUILT LEVELS \u26a0\ufe0f",
+            "Your soul can't take much more...",
+            "GUILT OVERLOAD IMMINENT \ud83d\udca5",
+            "You're basically a villain now \ud83d\ude2d",
+            "The screen is literally cracking...",
+            "FINAL WARNING. YOUR CONSCIENCE WILL NOT RECOVER.",
+            "SYSTEM FAILURE. GUILT OVERLOAD. \ud83d\ude2d\ud83d\udc80"
+        ];
+
+        function updateGuiltMeter() {
+            guiltMeter.classList.add('visible');
+            const percent = Math.min(Math.round((noAttempts / MAX_GUILT) * 100), 100);
+            meterFill.style.width = percent + '%';
+            meterPercent.textContent = percent + '%';
+            const statusIndex = Math.min(noAttempts - 1, guiltStatuses.length - 1);
+            meterStatus.textContent = guiltStatuses[statusIndex];
+
+            if (percent >= 100) {
+                meterFill.style.background = 'linear-gradient(90deg, #ff0844, #ff4500, #ff0844)';
+                meterStatus.style.fontWeight = 'bold';
+                meterStatus.style.opacity = '1';
+            }
+        }
+
+        // ============================================================
+        // PROGRESSIVE SCREEN CRACK SYSTEM
+        // ============================================================
+        let screenBroken = false;
+        let currentCrackStage = 0;
+        const crackOverlay = document.getElementById('crack-overlay');
+
+        function updateCracks() {
+            if (screenBroken) return;
+
+            // Stage 1: First hairline crack (No 3-6) + subtle micro-glitch
+            if (noAttempts >= 3 && currentCrackStage < 1) {
+                currentCrackStage = 1;
+                crackOverlay.className = 'crack-overlay stage-1';
+                document.body.classList.add('micro-glitch');
+                playTone(150, 0.15, 'square', 0.08);
+            }
+            // Stage 2: Crack spreads (No 7-10)
+            if (noAttempts >= 7 && currentCrackStage < 2) {
+                currentCrackStage = 2;
+                crackOverlay.className = 'crack-overlay stage-2';
+                playTone(120, 0.2, 'square', 0.12);
+            }
+            // Stage 3: Major fractures (No 11-14)
+            if (noAttempts >= 11 && currentCrackStage < 3) {
+                currentCrackStage = 3;
+                crackOverlay.className = 'crack-overlay stage-3';
+                playTone(90, 0.25, 'sawtooth', 0.15);
+            }
+            // Stage 4: Full shatter + break (No 15 — all messages exhausted)
+            if (noAttempts >= 15) {
+                triggerScreenBreak();
+            }
+        }
+
+        function triggerScreenBreak() {
+            if (screenBroken) return;
+            screenBroken = true;
+
+            // Show final crack stage
+            crackOverlay.className = 'crack-overlay stage-4';
+            document.body.classList.remove('micro-glitch');
+
+            // Phase 1: Heavy glitch
+            document.body.classList.add('glitching');
+            playTone(100, 0.5, 'sawtooth', 0.2);
+            setTimeout(() => playTone(80, 0.4, 'square', 0.15), 200);
+            setTimeout(() => playTone(60, 0.6, 'sawtooth', 0.18), 400);
+
+            // Phase 2: Screen flickers to black
+            setTimeout(() => {
+                document.body.classList.remove('glitching');
+                document.body.style.transition = 'background 0.5s ease, opacity 0.5s ease';
+                document.body.style.background = '#000';
+                mainScreen.style.transition = 'opacity 0.8s ease';
+                mainScreen.style.opacity = '0';
+                btnNo.style.display = 'none';
+            }, 2000);
+
+            // Phase 3: Hide everything, show final plea
+            setTimeout(() => {
+                crackOverlay.className = 'crack-overlay';
+                mainScreen.style.display = 'none';
+                document.getElementById('final-plea').classList.add('active');
+            }, 3000);
+        }
+
+        // Wire up the final plea Yes button
+        document.getElementById('plea-yes-btn').addEventListener('click', () => {
+            document.getElementById('final-plea').classList.remove('active');
+            crackOverlay.className = 'crack-overlay';
+            document.body.classList.remove('glitching');
+            document.body.classList.remove('micro-glitch');
+            document.body.style.transition = '';
+            mainScreen.style.display = '';
+            mainScreen.style.opacity = '';
+            mainScreen.style.transition = '';
+            // Trigger the normal celebration
+            btnYes.click();
+        });
+
         function moveNoButton() {
             noAttempts++;
 
@@ -760,6 +1374,8 @@
                 btnYes.style.padding = `${Math.min(15 + noAttempts * 2, 30)}px ${Math.min(40 + noAttempts * 3, 80)}px`;
             }
 
+            updateGuiltMeter();
+            updateCracks();
             playSadSound();
         }
 
@@ -815,6 +1431,44 @@
                 }, i * 400);
             }
         });
+
+        // ============================================================
+        // SHARE BUTTON
+        // ============================================================
+        document.getElementById('btn-share').addEventListener('click', async () => {
+            const shareData = {
+                title: 'I Got Forgiven! 🌻',
+                text: `BREAKING NEWS: ${PERSON_NAME} has officially forgiven Debasish after he built an ENTIRE website to apologize. ${noAttempts > 0 ? `She tried to say No ${noAttempts} time(s) but eventually caved. ` : ''}Iconic behavior only. 🌻💛`,
+            };
+
+            const shareCopied = document.getElementById('share-copied');
+
+            // Try native share (mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    shareCopied.textContent = 'Shared successfully! The world now knows 🌻';
+                    shareCopied.classList.add('visible');
+                } catch (e) {
+                    if (e.name !== 'AbortError') {
+                        copyFallback(shareData.text, shareCopied);
+                    }
+                }
+            } else {
+                copyFallback(shareData.text, shareCopied);
+            }
+        });
+
+        function copyFallback(text, statusEl) {
+            navigator.clipboard.writeText(text).then(() => {
+                statusEl.textContent = 'Copied to clipboard! Now go paste it everywhere 😌🌻';
+                statusEl.classList.add('visible');
+            }).catch(() => {
+                statusEl.textContent = 'Take a screenshot and share this moment with the world! 📸';
+                statusEl.classList.add('visible');
+            });
+            setTimeout(() => statusEl.classList.remove('visible'), 4000);
+        }
 
         // ============================================================
         // CONFETTI SYSTEM
@@ -1049,6 +1703,110 @@
             if (document.visibilityState === 'hidden') {
                 logEvent('page_hidden');
             }
+        });
+
+        // ============================================================
+        // REASONS I VALUE YOU - Card Deck
+        // ============================================================
+        const reasons = [
+            "You laugh at my jokes even when they're objectively terrible. That's loyalty.",
+            "You always know exactly when I need someone to talk to — even before I do.",
+            "You never judge me for my overthinking. You just... get it.",
+            "You hype me up like nobody else. My confidence literally runs on your validation.",
+            "You're the only person who can roast me AND make me feel loved at the same time.",
+            "Our conversations go from deep philosophical debates to absolute nonsense in 0.2 seconds.",
+            "You remember the tiny things I say, and that makes me feel like I actually matter.",
+            "You make ordinary days feel special just by being in them.",
+            "You've seen me at my worst and you're still here. That's not just friendship, that's legendary.",
+            "You push me to be better without ever making me feel like I'm not enough.",
+            "Your smile is genuinely contagious and science should study it honestly.",
+            "The world just makes more sense when you're in my corner. 🌻"
+        ];
+
+        let reasonsRevealed = 0;
+        const reasonsDeck = document.getElementById('reasons-deck');
+        const reasonsHint = document.getElementById('reasons-hint');
+
+        // Build hidden cards
+        reasons.forEach((reason, i) => {
+            const card = document.createElement('div');
+            card.className = 'reason-card';
+            card.innerHTML = `<span class="reason-number">${i + 1}</span><span class="reason-text">${reason}</span>`;
+            reasonsDeck.appendChild(card);
+        });
+
+        // Reveal on tap/click
+        document.getElementById('reasons-section').addEventListener('click', () => {
+            const cards = reasonsDeck.querySelectorAll('.reason-card:not(.revealed)');
+            if (cards.length > 0) {
+                cards[0].classList.add('revealed');
+                reasonsRevealed++;
+                playTone(400 + reasonsRevealed * 50, 0.15, 'sine', 0.08);
+
+                if (reasonsRevealed >= reasons.length) {
+                    reasonsHint.textContent = "That's all of them. But the list never really ends. 🌻";
+                } else {
+                    reasonsHint.textContent = `${reasons.length - reasonsRevealed} more to reveal... keep tapping!`;
+                }
+            }
+        });
+
+        // Auto-reveal first 3 cards after celebration loads
+        btnYes.addEventListener('click', () => {
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const cards = reasonsDeck.querySelectorAll('.reason-card:not(.revealed)');
+                        if (cards.length > 0) {
+                            cards[0].classList.add('revealed');
+                            reasonsRevealed++;
+                            if (reasonsRevealed < reasons.length) {
+                                reasonsHint.textContent = `${reasons.length - reasonsRevealed} more to reveal... keep tapping!`;
+                            }
+                        }
+                    }, i * 600);
+                }
+            }, 3000);
+        });
+
+        // ============================================================
+        // LIVE VISITOR COUNTER
+        // ============================================================
+        const visitorCounter = document.getElementById('visitor-counter');
+        const visitorText = document.getElementById('visitor-text');
+
+        async function fetchVisitorCount() {
+            try {
+                const res = await fetch(ANALYTICS_URL + '?action=count&_key=sunflower-apology-2026');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.count !== undefined) {
+                        const count = parseInt(data.count) || 0;
+                        visitorText.textContent = `${count} people have witnessed this apology`;
+                        visitorCounter.classList.add('visible');
+                    } else {
+                        // Fallback: use a reasonable estimate
+                        showFallbackCounter();
+                    }
+                } else {
+                    showFallbackCounter();
+                }
+            } catch (e) {
+                showFallbackCounter();
+            }
+        }
+
+        function showFallbackCounter() {
+            // Read from sessionStorage to at least count local sessions
+            let localCount = parseInt(sessionStorage.getItem('apology_views') || '0') + 1;
+            sessionStorage.setItem('apology_views', localCount.toString());
+            visitorText.textContent = `You're viewing this apology live`;
+            visitorCounter.classList.add('visible');
+        }
+
+        // Fetch count after overlay tap
+        startOverlay.addEventListener('click', () => {
+            setTimeout(fetchVisitorCount, 1500);
         });
     </script>
 </body>
